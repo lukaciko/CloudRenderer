@@ -18,8 +18,14 @@ public:
 	bool initialize( int, int, int );
 	void terminate();
 	void draw( SimulationData*, GLFWmutex, double );
+	void shadeClouds( SimulationData*, double );
+	void renderClouds( SimulationData*, double );
 private:
 	Camera camera;
+	glm::mat4 perspectiveProjection;
+	glm::mat4 orthographicProjection;
+	glm::vec3 sunPosition;
+	glm::mat4 sunTransformation;
 };
 
 #endif

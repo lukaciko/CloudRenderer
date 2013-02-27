@@ -20,8 +20,6 @@ GLuint circleTex;
 
 RendererModule::RendererModule() {};
 
-// Initializes the RendererModule
-// Returns false if it fails to initialize
 bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 	// Initialize GLFW and opens a window
@@ -81,7 +79,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glGenerateMipmap( GL_TEXTURE_2D );
 
-	// data for shader
+	// A single billboard data
 	float vertexSize = 1.8f;
 	float vertices[] = {
 	//	Vertex position		      Texcoords
@@ -98,6 +96,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, 
 		GL_STATIC_DRAW );
 
+	// Define data layout
 	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
 		"vertPos" );
 	glEnableVertexAttribArray( posAttrib );
@@ -110,12 +109,19 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 
 		4*sizeof(float), (void*)( 2*sizeof(float) ) );
 
-	// Initialize the camera and the projection matrix
+	// Initialize the camera and the projection matrices
 	camera.initialize( gridX, gridY, gridZ );
-	glm::mat4 proj = glm::perspective( 60.0f, 
+	perspectiveProjection = glm::perspective( 85.0f, 
 		(float)windowWidth / (float)windowHeight, 0.4f, 300.0f );
-	GLint uniProj = glGetUniformLocation( billboardShaderProgram, "proj" );
-	glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( proj ) );
+	orthographicProjection = glm::ortho( -(windowWidth/2.0f), windowWidth/2.0f, 
+		-(windowHeight/2.0f), windowHeight/2.0f, 0.0f, 1000.0f ); 
+
+	// Set the sun position and sun position matrix (looking at the center of 
+	// the cloud)
+	sunPosition = glm::vec3( 300, 250, 250 ); 
+	glm::vec3 lookAtPoint = glm::vec3( gridX/2, gridY/2, -gridZ/2 );
+	sunTransformation = glm::lookAt( sunPosition, 
+		lookAtPoint, glm::vec3(10, 10, 0));
 
 	return true;
 
@@ -123,67 +129,90 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
 
-	// Clear the screen with sky color
-	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable( GL_BLEND );
-
 	// Update the camera
 	camera.updateCamera();
-
-	glm::mat4 view = camera.getLookAtMatrix();
-	GLint uniView = glGetUniformLocation( billboardShaderProgram, "view" );
-	glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( view ) );
-
-	GLint uniPosition = glGetUniformLocation( billboardShaderProgram, "position" );
-	GLint uniAlpha = glGetUniformLocation( billboardShaderProgram, "alpha" );
 	
-	// Calculate relative difference for linear interpolation
-	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
-	if( relDiff > 1.0f )relDiff = 1.0f;
+	// Place the camera in the sun position
+	GLint uniView = glGetUniformLocation( billboardShaderProgram, "view" );
+	glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( sunTransformation ) );
 
-	int x = data->getGridLength();
-	int y = data->getGridWidth();
-	int z = data->getGridHeight();
+	// Set the parallel projection
+	GLint uniProj = glGetUniformLocation( billboardShaderProgram, "proj" );
+	glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( orthographicProjection ) );
 
-	// Lock mutex and draw stuff
+	// Clear the screen with white color
+	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
+	// Lock mutex because we will use data, which is shared with simulation
 	glfwLockMutex( simMutex );
-	double startTime = glfwGetTime();
-	for( int i = 0; i < x; ++i ) 
-		for( int j = 0; j < y; ++j ) 
-			for( int k = 0; k < z; ++k ) {
-				if( data->nextDen[i][j][k] > 0.0f ) {
-					
-					// Lineary interpolate the density
-					float density = data->prevDen[i][j][k] + relDiff
-						* (data->nextDen[i][j][k] - data->prevDen[i][j][k] );
-					
-					if( density > 0.0f) {
-						// Build a translation (model) matrix in the shader, 
-						// because it's a lot faster than creating the matrix 
-						//// here. 
-						//float posX = ( i - x / 2.0f );
-						//float posY = ( j - y / 2.0f );
-						//float posZ = ( k - z / 2.0f );
-						
-						glUniform3f( uniPosition, i, j, -k );
-						glUniform1f( uniAlpha, density );
-						
-						glDrawArrays( GL_TRIANGLES, 0, 6 );
-					}
-				}
-			}
+
+	shadeClouds( data, time );
+
+	// Place the camera at the viewpoint
+	glm::mat4 view = camera.getLookAtMatrix();
+	//glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( view ) );
+	
+	// Set perspective projection
+	//glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( perspectiveProjection ) );
+
+	// Clear the screen with background (sky) color
+	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
+	renderClouds( data, time );
 
 	glfwUnlockMutex( simMutex );
 
+	// Check for errors
 	GLint glErr = glGetError();
 	if ( glErr ) std::cout << "OpenGL error " << glErr << "!\n";
 
 	// Swap the buffer
 	glfwSwapBuffers();
 
+}
+
+void RendererModule::shadeClouds( SimulationData* data, double time ) { }
+
+void RendererModule::renderClouds( SimulationData* data, double time ) { 
+	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable( GL_BLEND );
+
+	GLint uniPosition = glGetUniformLocation( billboardShaderProgram, "position" );
+	GLint uniAlpha = glGetUniformLocation( billboardShaderProgram, "alpha" );
+
+	int x = data->getGridLength();
+	int y = data->getGridWidth();
+	int z = data->getGridHeight();
+	
+	double startTime = glfwGetTime();
+
+	// Calculate relative difference for linear interpolation
+	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
+	if( relDiff > 1.0f )relDiff = 1.0f;
+
+	for( int i = 0; i < x; ++i ) 
+		for( int j = 0; j < y; ++j ) 
+			for( int k = 0; k < z; ++k ) {
+				if( data->nextDen[i][j][k] > 0.0f ) {
+
+					// Lineary interpolate the density
+					float density = data->prevDen[i][j][k] + relDiff
+						* (data->nextDen[i][j][k] - data->prevDen[i][j][k] );
+
+					if( density > 0.0f) {
+						// Build a translation (model) matrix in the shader, 
+						// because it's a lot faster than creating the matrix 
+						//// here. 
+						glUniform3f( uniPosition, i, j, -k );
+						glUniform1f( uniAlpha, density );
+
+						glDrawArrays( GL_TRIANGLES, 0, 6 );
+					}
+				}
+			}
 }
 
 void RendererModule::terminate() {

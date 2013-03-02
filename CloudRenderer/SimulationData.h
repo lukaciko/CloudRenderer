@@ -5,7 +5,6 @@
 #define SIMULATIONDATA_H
 
 #include "Metaball.h"
-#include <GL\glew.h>
 
 #include <vector>
 

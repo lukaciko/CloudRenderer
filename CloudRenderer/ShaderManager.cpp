@@ -2,8 +2,6 @@
 
 #include "ShaderManager.h"
 
-#include <GL\glew.h>
-
 #include <string>
 #include <iostream>
 #include <fstream>

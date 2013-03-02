@@ -5,6 +5,7 @@
 #define SIMULATIONDATA_H
 
 #include "Metaball.h"
+#include <GL\glew.h>
 
 #include <vector>
 
@@ -19,7 +20,7 @@ public:
 	metaVector metaballs;
 
 	float *** nextDen; // Continous density distribution (protected with mutex)
-	float *** prevDen; // Previous continous density distribution
+	GLfloat *** prevDen; // Previous continous density distribution
 
 	double nextTime; // Time when nextDen was computed
 	double prevTime; // Time when prevDen was computed

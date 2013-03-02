@@ -14,7 +14,7 @@
 
 namespace loop {
 
-	// The size of the grid
+	// The size of the grid (must be powers of 2)
 	int gridX = 128;
 	int gridY = 32;
 	int gridZ = 128;

@@ -17,6 +17,7 @@ const char * windowTitle = "Real-timeish Cloud Renderer";
 GLuint billboardShaderProgram;
 GLuint vao;
 GLuint circleTex;
+GLuint volumeTexture;
 
 RendererModule::RendererModule() {};
 
@@ -61,11 +62,13 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	// Generate the textures
 	glGenTextures( 1, &circleTex );
 	glBindTexture( GL_TEXTURE_2D, circleTex );
+	glGenTextures( 1, &volumeTexture );
+	glBindTexture( GL_TEXTURE_3D, volumeTexture );
 
 	int iWidth, iHeight;
 	unsigned char* image;
 
-	// Load the textures
+	// Load the particle texture
 	const char* path = "particle_texture.jpg";
 	image = SOIL_load_image( path, &iWidth, &iHeight, 0, SOIL_LOAD_RGBA );
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA,
@@ -78,6 +81,13 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glGenerateMipmap( GL_TEXTURE_2D );
+
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glGenerateMipmap( GL_TEXTURE_3D );
 
 	// A single billboard data
 	float vertexSize = 1.8f;
@@ -113,15 +123,15 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	camera.initialize( gridX, gridY, gridZ );
 	perspectiveProjection = glm::perspective( 85.0f, 
 		(float)windowWidth / (float)windowHeight, 0.4f, 300.0f );
-	orthographicProjection = glm::ortho( -(windowWidth/2.0f), windowWidth/2.0f, 
-		-(windowHeight/2.0f), windowHeight/2.0f, 0.0f, 1000.0f ); 
+	orthographicProjection = glm::ortho( -(gridX/2.0f), gridX/2.0f, 
+		-(gridY/2.0f), gridY/2.0f, 0.0f, 500.0f ); 
 
 	// Set the sun position and sun position matrix (looking at the center of 
 	// the cloud)
 	sunPosition = glm::vec3( 300, 250, 250 ); 
 	glm::vec3 lookAtPoint = glm::vec3( gridX/2, gridY/2, -gridZ/2 );
 	sunTransformation = glm::lookAt( sunPosition, 
-		lookAtPoint, glm::vec3(10, 10, 0));
+		lookAtPoint, glm::vec3(0, 0, 1));
 
 	return true;
 
@@ -151,10 +161,10 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 	// Place the camera at the viewpoint
 	glm::mat4 view = camera.getLookAtMatrix();
-	//glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( view ) );
+	glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( view ) );
 	
 	// Set perspective projection
-	//glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( perspectiveProjection ) );
+	glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( perspectiveProjection ) );
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
@@ -173,7 +183,29 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 }
 
-void RendererModule::shadeClouds( SimulationData* data, double time ) { }
+// Shade clouds by performing volume ray casting
+void RendererModule::shadeClouds( SimulationData* data, double time ) {
+	
+	int x = data->getGridLength();
+	int y = data->getGridWidth();
+	int z = data->getGridHeight();
+	
+	// Convert float*** to float* (stream of data)
+	float* texData = new float[x*y*z];
+	int pos = 0;
+	for( int i = 0; i < x; ++i ) // TODO: might be wrong order
+		for( int j = 0; j < y; ++j ) 
+			for( int k = 0; k < z; ++k ) {
+				texData[pos] = data->prevDen[i][j][k]; 
+				++pos;
+			}
+
+	// Fill the data into 3D texture. A texture cell includes only one
+	// component (GL_RED = density, float). 
+	glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
+		GL_FLOAT, texData );
+
+}
 
 void RendererModule::renderClouds( SimulationData* data, double time ) { 
 	
@@ -187,8 +219,6 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 	int y = data->getGridWidth();
 	int z = data->getGridHeight();
 	
-	double startTime = glfwGetTime();
-
 	// Calculate relative difference for linear interpolation
 	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
 	if( relDiff > 1.0f )relDiff = 1.0f;
@@ -205,7 +235,7 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 					if( density > 0.0f) {
 						// Build a translation (model) matrix in the shader, 
 						// because it's a lot faster than creating the matrix 
-						//// here. 
+						// here. 
 						glUniform3f( uniPosition, i, j, -k );
 						glUniform1f( uniAlpha, density );
 

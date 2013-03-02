@@ -3,8 +3,6 @@
 #ifndef SHADERMANAGER_H
 #define SHADERMANAGER_H
 
-#include <GL/glew.h>
-
 class ShaderManager {
 public:
 	GLuint createFromFile( char* vertexFile, char* fragmentFile );

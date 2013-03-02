@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#define GLFW_DLL
 
-
-// TODO: reference additional headers your program requires here
+#include <GL/glew.h>
+#include <GL/glfw.h>

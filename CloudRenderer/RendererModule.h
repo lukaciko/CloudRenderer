@@ -4,12 +4,6 @@
 #define RENDERERMODULE_H
 
 #include "SimulationData.h"
-
-#define GLFW_DLL
-
-#include <GL/glew.h>
-#include <GL/glfw.h>
-
 #include "Camera.h"
 
 class RendererModule {

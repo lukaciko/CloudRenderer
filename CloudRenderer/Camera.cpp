@@ -2,10 +2,6 @@
 
 #include "Camera.h"
 
-#define GLFW_DLL
-
-#include <gl/glew.h>
-#include <GL/glfw.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera() {

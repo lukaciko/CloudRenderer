@@ -2,10 +2,6 @@
 
 #include "mainLoop.h"
 
-#define GLFW_DLL
-
-#include <GL/glew.h>
-#include <GL/glfw.h>
 #include <iostream>
 
 #include "SimulationData.h"

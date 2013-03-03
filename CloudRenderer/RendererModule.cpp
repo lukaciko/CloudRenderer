@@ -16,6 +16,7 @@ const char * windowTitle = "Real-timeish Cloud Renderer";
 
 ShaderManager shaderManager;
 GLuint billboardShaderProgram;
+GLuint rayTracerShaderProgram;
 GLuint vao;
 GLuint circleTex;
 GLuint volumeTexture;
@@ -57,7 +58,8 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	// Load and compile shaders
 	billboardShaderProgram = shaderManager.createFromFile( 
 		"BillboardShader.vert", "BillboardShader.frag" );
-	glUseProgram( billboardShaderProgram );
+	rayTracerShaderProgram = shaderManager.createFromFile( 
+		"RayTracerShader.vert", "RayTracerShader.frag" );
 
 	initializeTextures();
 
@@ -111,6 +113,8 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
 
+	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
+
 	// Update the camera
 	camera.updateCamera();
 	
@@ -130,6 +134,8 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	glfwLockMutex( simMutex );
 
 	shadeClouds( data, time );
+
+	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
 
 	// Place the camera at the viewpoint
 	glm::mat4 view = camera.getLookAtMatrix();
@@ -157,7 +163,12 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 // Shade clouds by performing volume ray casting
 void RendererModule::shadeClouds( SimulationData* data, double time ) {
-	
+	GLint glErr = glGetError();
+	if ( glErr ) std::cout << "OpenGL error " << glErr << "!\n";
+	glUseProgram( rayTracerShaderProgram );
+	 glErr = glGetError();
+	if ( glErr ) std::cout << "OpenGL error " << glErr << "!\n";
+
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
 	int z = data->getGridHeight();
@@ -168,7 +179,7 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	for( int i = 0; i < x; ++i ) // TODO: might be wrong order
 		for( int j = 0; j < y; ++j ) 
 			for( int k = 0; k < z; ++k ) {
-				texData[pos] = data->prevDen[i][j][k]; 
+				texData[pos] = data->prevDen[i][j][k]; //TODO: interpolate
 				++pos;
 			}
 
@@ -177,7 +188,7 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
 		GL_FLOAT, texData );
 
-	//delete[] texData;
+	delete[] texData;
 
 }
 

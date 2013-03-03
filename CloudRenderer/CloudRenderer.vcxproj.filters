@@ -82,6 +82,12 @@
     <None Include="BillboardShader.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="RayTracerShader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="RayTracerShader.vert">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="particle_texture.jpg">

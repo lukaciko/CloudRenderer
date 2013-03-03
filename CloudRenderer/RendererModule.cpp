@@ -250,6 +250,7 @@ void RendererModule::terminate() {
 	glDeleteProgram( billboardShaderProgram );
 	// Todo : delete shaders
 	glDeleteTextures( 1, &circleTex );
+	glDeleteTextures( 1, &volumeTexture );
 	glDeleteVertexArrays( 1, &vao );
 
 	// Terminate GLFW

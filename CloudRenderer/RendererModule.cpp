@@ -14,6 +14,7 @@ GLuint windowWidth = 800;
 GLuint windowHeight = 600;
 const char * windowTitle = "Real-timeish Cloud Renderer";
 
+ShaderManager shaderManager;
 GLuint billboardShaderProgram;
 GLuint vao;
 GLuint circleTex;
@@ -54,40 +55,11 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glBindVertexArray( vao );
 
 	// Load and compile shaders
-	ShaderManager shaderManager;
 	billboardShaderProgram = shaderManager.createFromFile( 
 		"BillboardShader.vert", "BillboardShader.frag" );
 	glUseProgram( billboardShaderProgram );
-	
-	// Generate the textures
-	glGenTextures( 1, &circleTex );
-	glBindTexture( GL_TEXTURE_2D, circleTex );
-	glGenTextures( 1, &volumeTexture );
-	glBindTexture( GL_TEXTURE_3D, volumeTexture );
 
-	int iWidth, iHeight;
-	unsigned char* image;
-
-	// Load the particle texture
-	const char* path = "particle_texture.jpg";
-	image = SOIL_load_image( path, &iWidth, &iHeight, 0, SOIL_LOAD_RGBA );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA,
-		GL_UNSIGNED_BYTE, image );
-	SOIL_free_image_data( image );
-	
-	// Select OpenGL texture parameters
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glGenerateMipmap( GL_TEXTURE_2D );
-
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glGenerateMipmap( GL_TEXTURE_3D );
+	initializeTextures();
 
 	// A single billboard data
 	float vertexSize = 1.8f;
@@ -205,6 +177,8 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
 		GL_FLOAT, texData );
 
+	//delete[] texData;
+
 }
 
 void RendererModule::renderClouds( SimulationData* data, double time ) { 
@@ -245,12 +219,49 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 			}
 }
 
+void RendererModule::initializeTextures() {
+	
+	// Generate the textures
+	glGenTextures( 1, &circleTex );
+	glBindTexture( GL_TEXTURE_2D, circleTex );
+	glGenTextures( 1, &volumeTexture );
+	glBindTexture( GL_TEXTURE_3D, volumeTexture );
+
+	int iWidth, iHeight;
+	unsigned char* image;
+
+	// Load the particle texture
+	const char* path = "particle_texture.jpg";
+	image = SOIL_load_image( path, &iWidth, &iHeight, 0, SOIL_LOAD_RGBA );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA,
+		GL_UNSIGNED_BYTE, image );
+	SOIL_free_image_data( image );
+	
+	// Select OpenGL texture parameters
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glGenerateMipmap( GL_TEXTURE_2D );
+
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glGenerateMipmap( GL_TEXTURE_3D );
+
+}
+
+void RendererModule::deleteTextures() {
+	glDeleteTextures( 1, &circleTex );
+	glDeleteTextures( 1, &volumeTexture );
+}
+
 void RendererModule::terminate() {
 
 	glDeleteProgram( billboardShaderProgram );
-	// Todo : delete shaders
-	glDeleteTextures( 1, &circleTex );
-	glDeleteTextures( 1, &volumeTexture );
+	shaderManager.terminate();
 	glDeleteVertexArrays( 1, &vao );
 
 	// Terminate GLFW

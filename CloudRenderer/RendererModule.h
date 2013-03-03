@@ -10,7 +10,9 @@ class RendererModule {
 public:
 	RendererModule();
 	bool initialize( int, int, int );
+	void initializeTextures();
 	void terminate();
+	void deleteTextures();
 	void draw( SimulationData*, GLFWmutex, double );
 	void shadeClouds( SimulationData*, double );
 	void renderClouds( SimulationData*, double );

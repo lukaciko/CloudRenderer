@@ -77,3 +77,8 @@ GLuint ShaderManager::createFromFile( char* vertexFile, char* fragmentFile ) {
 	return shaderProgram;
 
 }
+
+void ShaderManager::terminate() {
+	glDeleteShader( vertexShader );
+	glDeleteShader( fragmentShader );
+}

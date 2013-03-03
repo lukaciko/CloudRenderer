@@ -6,6 +6,7 @@
 class ShaderManager {
 public:
 	GLuint createFromFile( char* vertexFile, char* fragmentFile );
+	void terminate();
 private:
 	GLuint vertexShader;
 	GLuint fragmentShader;

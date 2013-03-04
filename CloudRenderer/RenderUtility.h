@@ -5,6 +5,10 @@
 
 #include <glm\glm.hpp>
 
+GLuint createVBO( float [], int );
+void deleteVBO();
+void initializeTextures();
+void deleteTextures();
 void setUniform( const char*, glm::mat4 );
 
 #endif

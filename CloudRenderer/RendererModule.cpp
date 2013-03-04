@@ -2,7 +2,6 @@
 
 #include "RendererModule.h"
 
-#include <SOIL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -19,8 +18,6 @@ ShaderManager shaderManager;
 GLuint billboardShaderProgram;
 GLuint rayTracerShaderProgram;
 GLuint vao;
-GLuint circleTex;
-GLuint volumeTexture;
 
 RendererModule::RendererModule() {};
 
@@ -75,12 +72,8 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
 		 vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
 	};
-	GLuint vbo;
-	glGenBuffers( 1, &vbo ); // Generate 1 buffer
-	glBindBuffer( GL_ARRAY_BUFFER, vbo );
-	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, 
-		GL_STATIC_DRAW );
-
+	createVBO( vertices, sizeof(vertices) );
+	
 	// Define data layout
 	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
 		"vertPos" );
@@ -228,50 +221,12 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 			}
 }
 
-void RendererModule::initializeTextures() {
-	
-	// Generate the textures
-	glGenTextures( 1, &circleTex );
-	glBindTexture( GL_TEXTURE_2D, circleTex );
-	glGenTextures( 1, &volumeTexture );
-	glBindTexture( GL_TEXTURE_3D, volumeTexture );
-
-	int iWidth, iHeight;
-	unsigned char* image;
-
-	// Load the particle texture
-	const char* path = "particle_texture.jpg";
-	image = SOIL_load_image( path, &iWidth, &iHeight, 0, SOIL_LOAD_RGBA );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, iWidth, iHeight, 0, GL_RGBA,
-		GL_UNSIGNED_BYTE, image );
-	SOIL_free_image_data( image );
-	
-	// Select OpenGL texture parameters
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glGenerateMipmap( GL_TEXTURE_2D );
-
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glGenerateMipmap( GL_TEXTURE_3D );
-
-}
-
-void RendererModule::deleteTextures() {
-	glDeleteTextures( 1, &circleTex );
-	glDeleteTextures( 1, &volumeTexture );
-}
-
 void RendererModule::terminate() {
 
 	glDeleteProgram( billboardShaderProgram );
 	shaderManager.terminate();
 	glDeleteVertexArrays( 1, &vao );
+	deleteTextures();
 
 	// Terminate GLFW
 	glfwTerminate();

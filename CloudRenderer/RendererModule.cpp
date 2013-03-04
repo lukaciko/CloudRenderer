@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "ShaderManager.h"
+#include "RenderUtility.h"
 
 GLuint windowWidth = 800;
 GLuint windowHeight = 600;
@@ -119,12 +120,10 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	camera.updateCamera();
 	
 	// Place the camera in the sun position
-	GLint uniView = glGetUniformLocation( billboardShaderProgram, "view" );
-	glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( sunTransformation ) );
+	setUniform( "view", sunTransformation );
 
 	// Set the parallel projection
-	GLint uniProj = glGetUniformLocation( billboardShaderProgram, "proj" );
-	glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( orthographicProjection ) );
+	setUniform( "proj", orthographicProjection );
 
 	// Clear the screen with white color
 	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -138,11 +137,10 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
 
 	// Place the camera at the viewpoint
-	glm::mat4 view = camera.getLookAtMatrix();
-	glUniformMatrix4fv( uniView, 1, GL_FALSE, glm::value_ptr( view ) );
+	setUniform( "view", camera.getLookAtMatrix() );
 	
 	// Set perspective projection
-	glUniformMatrix4fv( uniProj, 1, GL_FALSE, glm::value_ptr( perspectiveProjection ) );
+	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );

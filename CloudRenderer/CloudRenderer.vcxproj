@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Metaball.h" />
+    <ClInclude Include="RenderUtility.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SimulationData.h" />
     <ClInclude Include="RendererModule.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="CloudRenderer.cpp" />
     <ClCompile Include="Metaball.cpp" />
     <ClCompile Include="RendererModule.cpp" />
+    <ClCompile Include="RenderUtility.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SimulationData.cpp" />
     <ClCompile Include="SimulatorModule.cpp" />

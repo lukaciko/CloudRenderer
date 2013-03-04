@@ -9,6 +9,7 @@
 
 #include "ShaderManager.h"
 #include "RenderUtility.h"
+#include "Cube.h"
 
 GLuint windowWidth = 800;
 GLuint windowHeight = 600;
@@ -18,6 +19,8 @@ ShaderManager shaderManager;
 GLuint billboardShaderProgram;
 GLuint rayTracerShaderProgram;
 GLuint vao;
+GLuint billboardVBO;
+GLuint cubeVBO;
 
 RendererModule::RendererModule() {};
 
@@ -45,7 +48,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	if(err != GLEW_OK) {
 		std::cerr << "Failed to initialize GLEW: " << 
 			glewGetErrorString(err) << "\n";
-		exit( EXIT_FAILURE );
+		return false;
 	}
 
 	std::cout << "Running OpenGL version " << glGetString(GL_VERSION) << "\n";
@@ -72,7 +75,16 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
 		 vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
 	};
-	createVBO( vertices, sizeof(vertices) );
+	billboardVBO = createVBO( vertices, sizeof( vertices ) );
+
+	// Create cube that encapsulates the grid for ray casting
+	float cubeVertices[24];
+	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
+	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
+	int cubeElements[36];
+	getCubeElements( cubeElements );
+	glBindBuffer( GL_ARRAY_BUFFER, billboardVBO );
+	//createEBO( cubeElements, sizeof( cubeElements ));
 	
 	// Define data layout
 	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
@@ -113,10 +125,12 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	camera.updateCamera();
 	
 	// Place the camera in the sun position
-	setUniform( "view", sunTransformation );
-
+	//setUniform( "view", sunTransformation );
+	setUniform( "view", camera.getLookAtMatrix() );
+	
 	// Set the parallel projection
-	setUniform( "proj", orthographicProjection );
+	//setUniform( "proj", orthographicProjection );
+	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with white color
 	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -154,11 +168,8 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 // Shade clouds by performing volume ray casting
 void RendererModule::shadeClouds( SimulationData* data, double time ) {
-	GLint glErr = glGetError();
-	if ( glErr ) std::cout << "OpenGL error " << glErr << "!\n";
+
 	glUseProgram( rayTracerShaderProgram );
-	 glErr = glGetError();
-	if ( glErr ) std::cout << "OpenGL error " << glErr << "!\n";
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();

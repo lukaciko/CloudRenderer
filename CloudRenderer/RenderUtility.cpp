@@ -5,7 +5,10 @@
 #include <SOIL.h>
 #include <glm/gtc/type_ptr.hpp>
 
-GLuint vbo;
+GLuint VBOs[5];
+GLuint numVBOs;
+GLuint EBOs[5];
+GLuint numEBOs;
 
 GLuint circleTexture;
 GLuint volumeTexture;
@@ -13,16 +16,30 @@ GLuint volumeTexture;
 // Need to pass sizeof(vertices) as well because of dynamic arrays
 GLuint createVBO( float vertices [], int size ) {
 
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
+    glGenBuffers( 1, &VBOs[numVBOs] );
+    glBindBuffer( GL_ARRAY_BUFFER, VBOs[numVBOs] );
     glBufferData( GL_ARRAY_BUFFER, size, vertices, 
 		GL_STATIC_DRAW );
-    return vbo;
+    return VBOs[numVBOs++];
 
 }
 
-void deleteVBO() {
-	glDeleteBuffers( 1, &vbo );
+GLuint createEBO( int elements [], int size ) {
+
+    glGenBuffers( 1, &EBOs[numEBOs] );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, EBOs[numEBOs] );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, size, elements, 
+		GL_STATIC_DRAW );
+    return EBOs[numEBOs++];
+
+}
+
+void deleteVBOs() {
+	glDeleteBuffers( numVBOs, VBOs );
+}
+
+void deleteEBOs() {
+	glDeleteBuffers( numEBOs, EBOs );
 }
 
 void initializeTextures() {

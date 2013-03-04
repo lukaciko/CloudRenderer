@@ -6,7 +6,9 @@
 #include <glm\glm.hpp>
 
 GLuint createVBO( float [], int );
-void deleteVBO();
+GLuint createEBO( int [], int );
+void deleteVBOs();
+void deleteEBOs();
 void initializeTextures();
 void deleteTextures();
 void setUniform( const char*, glm::mat4 );

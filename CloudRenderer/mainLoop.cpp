@@ -71,7 +71,7 @@ namespace loop {
 		// Initialize cloud renderer module
 		rendererModule = new RendererModule();
 		if( !rendererModule->initialize( gridX, gridY, gridZ ) )
-			; //TODO : terminate
+			return;
 
 		// Initialize cloud simulation module
 		simulatorModule = new SimulatorModule( R );

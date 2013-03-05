@@ -5,38 +5,15 @@
 // Float array must be of size 3x8 floats
 void getCubeVertices( int startX, int stopX, int startY, int stopY, 
 					 int startZ, int stopZ, float vertices [] ) {
-	
-	vertices[0] = startX;
-	vertices[1] = startY;
-	vertices[2] = startZ;
-	
-	vertices[3] = stopX;
-	vertices[4] = startY;
-	vertices[5] = startZ;
 
-	vertices[6] = startX;
-	vertices[7] = stopY;
-	vertices[8] = startZ;
-
-	vertices[9] = stopX;
-	vertices[10] = stopY;
-	vertices[11] = startZ;
-
-	vertices[12] = startX;
-	vertices[13] = startY;
-	vertices[14] = stopZ;
-	
-	vertices[15] = stopX;
-	vertices[16] = startY;
-	vertices[17] = stopZ;
-
-	vertices[18] = startX;
-	vertices[19] = stopY;
-	vertices[20] = stopZ;
-
-	vertices[21] = stopX;
-	vertices[22] = stopY;
-	vertices[23] = stopZ;
+	float tempVertices [] = {
+		startX, startY, startZ,
+		stopX,  startY, startZ,
+		startX, stopY,  startZ,		stopX,  stopY,  startZ, 		startX, startY, stopZ, 		stopX,  startY, stopZ, 		startX, stopY,  stopZ, 		stopX,  stopY,  stopZ 
+	};
+	for( int i = 0; i < 24; ++i ) {
+		vertices[i] = tempVertices[i];
+	}
 
 }
 

@@ -75,17 +75,9 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
 		 vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
 	};
+	
 	billboardVBO = createVBO( vertices, sizeof( vertices ) );
 
-	// Create cube that encapsulates the grid for ray casting
-	float cubeVertices[24];
-	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
-	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
-	int cubeElements[36];
-	getCubeElements( cubeElements );
-	glBindBuffer( GL_ARRAY_BUFFER, billboardVBO );
-	//createEBO( cubeElements, sizeof( cubeElements ));
-	
 	// Define data layout
 	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
 		"vertPos" );
@@ -98,6 +90,19 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glEnableVertexAttribArray( texAttrib );
 	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 
 		4*sizeof(float), (void*)( 2*sizeof(float) ) );
+
+	// Create cube that encapsulates the grid for ray casting
+	float cubeVertices[24];
+
+	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
+	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
+
+	int cubeElements[36];
+	getCubeElements( cubeElements );
+	createEBO( cubeElements, sizeof( cubeElements ));
+	
+	// Finished with cube VBO, bind back the billboard VBO
+	glBindBuffer( GL_ARRAY_BUFFER, billboardVBO );
 
 	// Initialize the camera and the projection matrices
 	camera.initialize( gridX, gridY, gridZ );

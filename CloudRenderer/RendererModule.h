@@ -12,9 +12,12 @@ public:
 	bool initialize( int, int, int );
 	void terminate();
 	void draw( SimulationData*, GLFWmutex, double );
+private:
 	void shadeClouds( SimulationData*, double );
 	void renderClouds( SimulationData*, double );
-private:
+	void defineBillboardLayout( GLuint ); 
+	void defineRaycasterLayout( GLuint );
+
 	Camera camera;
 	glm::mat4 perspectiveProjection;
 	glm::mat4 orthographicProjection;

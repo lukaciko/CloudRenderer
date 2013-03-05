@@ -94,10 +94,10 @@
     <None Include="BillboardShader.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="RayTracerShader.frag">
+    <None Include="RaycasterShader.vert">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="RayTracerShader.vert">
+    <None Include="RaycasterShader.frag">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

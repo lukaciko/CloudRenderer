@@ -17,8 +17,8 @@ const char * windowTitle = "Real-timeish Cloud Renderer";
 
 ShaderManager shaderManager;
 GLuint billboardShaderProgram;
-GLuint rayTracerShaderProgram;
-GLuint vao;
+GLuint raycasterShaderProgram;
+GLuint VAOs [2];
 GLuint billboardVBO;
 GLuint cubeVBO;
 
@@ -53,14 +53,14 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 	std::cout << "Running OpenGL version " << glGetString(GL_VERSION) << "\n";
 
-	glGenVertexArrays( 1, &vao );
-	glBindVertexArray( vao );
+	glGenVertexArrays( 2, VAOs );
+	glBindVertexArray( VAOs[0] );
 
 	// Load and compile shaders
 	billboardShaderProgram = shaderManager.createFromFile( 
 		"BillboardShader.vert", "BillboardShader.frag" );
-	rayTracerShaderProgram = shaderManager.createFromFile( 
-		"RayTracerShader.vert", "RayTracerShader.frag" );
+	raycasterShaderProgram = shaderManager.createFromFile( 
+		"RaycasterShader.vert", "RaycasterShader.frag" );
 
 	initializeTextures();
 
@@ -77,34 +77,21 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	};
 	
 	billboardVBO = createVBO( vertices, sizeof( vertices ) );
-
-	// Define data layout
-	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
-		"vertPos" );
-	glEnableVertexAttribArray( posAttrib );
-	glVertexAttribPointer( posAttrib, 2, GL_FLOAT, GL_FALSE, 
-		4*sizeof(float), 0 );
-
-	GLint texAttrib = glGetAttribLocation( billboardShaderProgram, 
-		"texCoord" );
-	glEnableVertexAttribArray( texAttrib );
-	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 
-		4*sizeof(float), (void*)( 2*sizeof(float) ) );
+	defineBillboardLayout( billboardShaderProgram );
 
 	// Create cube that encapsulates the grid for ray casting
 	float cubeVertices[24];
-
 	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
+
 	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
+	glBindVertexArray( VAOs[1] );
+	defineRaycasterLayout( raycasterShaderProgram );
 
 	int cubeElements[36];
 	getCubeElements( cubeElements );
 	createEBO( cubeElements, sizeof( cubeElements ));
 	
-	// Finished with cube VBO, bind back the billboard VBO
-	glBindBuffer( GL_ARRAY_BUFFER, billboardVBO );
-
-	// Initialize the camera and the projection matrices
+	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
 	perspectiveProjection = glm::perspective( 85.0f, 
 		(float)windowWidth / (float)windowHeight, 0.4f, 300.0f );
@@ -122,8 +109,36 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 }
 
-void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
+void RendererModule::defineBillboardLayout( GLuint billboardShaderProgram ) {
 
+	// Define data layout
+	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
+		"vertPos" );
+	glEnableVertexAttribArray( posAttrib );
+	glVertexAttribPointer( posAttrib, 2, GL_FLOAT, GL_FALSE, 
+		4*sizeof(float), 0 );
+
+	GLint texAttrib = glGetAttribLocation( billboardShaderProgram, 
+		"texCoord" );
+	glEnableVertexAttribArray( texAttrib );
+	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 
+		4*sizeof(float), (void*)( 2*sizeof(float) ) );
+
+}
+
+void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
+	
+	GLint posAttrib = glGetAttribLocation( raycasterShaderProgram, 
+		"cubeVert" );
+	glEnableVertexAttribArray( posAttrib );
+	glVertexAttribPointer( posAttrib, 3, GL_FLOAT, GL_FALSE, 
+		3*sizeof(float), 0 );
+
+}
+
+void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
+	
+	glBindVertexArray( VAOs[0] );
 	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
 
 	// Update the camera
@@ -174,7 +189,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 // Shade clouds by performing volume ray casting
 void RendererModule::shadeClouds( SimulationData* data, double time ) {
 
-	glUseProgram( rayTracerShaderProgram );
+	glUseProgram( raycasterShaderProgram );
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
@@ -241,7 +256,7 @@ void RendererModule::terminate() {
 
 	glDeleteProgram( billboardShaderProgram );
 	shaderManager.terminate();
-	glDeleteVertexArrays( 1, &vao );
+	glDeleteVertexArrays( 2, VAOs );
 	deleteTextures();
 
 	// Terminate GLFW

@@ -116,8 +116,8 @@
   <ItemGroup>
     <None Include="BillboardShader.frag" />
     <None Include="BillboardShader.vert" />
-    <None Include="RayTracerShader.frag" />
-    <None Include="RayTracerShader.vert" />
+    <None Include="RaycasterShader.frag" />
+    <None Include="RaycasterShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="particle_texture.jpg" />

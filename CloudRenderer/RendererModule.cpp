@@ -153,7 +153,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with white color
-	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	glClearColor( 1.0f, 1.0f, 0.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// Lock mutex because we will use data, which is shared with simulation
@@ -161,6 +161,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 	shadeClouds( data, time );
 
+	glBindVertexArray( VAOs[0] );
 	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
 
 	// Place the camera at the viewpoint
@@ -171,7 +172,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	renderClouds( data, time );
 
@@ -189,7 +190,15 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 // Shade clouds by performing volume ray casting
 void RendererModule::shadeClouds( SimulationData* data, double time ) {
 
+	glBindVertexArray( VAOs[1] );
 	glUseProgram( raycasterShaderProgram );
+
+	setUniform( "view", camera.getLookAtMatrix() );
+	setUniform( "proj", perspectiveProjection );
+	
+	glEnable( GL_CULL_FACE );
+	glEnable( GL_DEPTH_TEST );
+	glFrontFace( GL_CW );
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
@@ -212,12 +221,16 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 
 	delete[] texData;
 
+	glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
+
 }
 
 void RendererModule::renderClouds( SimulationData* data, double time ) { 
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable( GL_BLEND );
+	glDisable( GL_CULL_FACE );
+	glDisable( GL_DEPTH_TEST );
 
 	GLint uniPosition = glGetUniformLocation( billboardShaderProgram, "position" );
 	GLint uniAlpha = glGetUniformLocation( billboardShaderProgram, "alpha" );

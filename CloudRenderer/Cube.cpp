@@ -2,21 +2,21 @@
 
 #include "Cube.h"
 
-// Float array must be of size 3x8 floats
+// Float array must be of size 2x3x8 floats
 void getCubeVertices( int startX, int stopX, int startY, int stopY, 
 					 int startZ, int stopZ, float vertices [] ) {
 
 	float tempVertices [] = {
-		startX, startY, -startZ,
-		stopX,  startY, -startZ,
-		startX, stopY,  -startZ,
-		stopX,  stopY,  -startZ, 
-		startX, startY, -stopZ, 
-		stopX,  startY, -stopZ, 
-		startX, stopY,  -stopZ, 
-		stopX,  stopY,  -stopZ 
+		startX, startY, -startZ, 0.0f, 0.0f, 0.0f,
+		stopX,  startY, -startZ, 1.0f, 0.0f, 0.0f,
+		startX, stopY,  -startZ, 0.0f, 1.0f, 0.0f,
+		stopX,  stopY,  -startZ, 1.0f, 1.0f, 0.0f,
+		startX, startY, -stopZ,  0.0f, 0.0f, 1.0f,
+		stopX,  startY, -stopZ,  1.0f, 0.0f, 1.0f,
+		startX, stopY,  -stopZ,  0.0f, 1.0f, 1.0f,
+		stopX,  stopY,  -stopZ,  1.0f, 1.0f, 1.0f
 	};
-	for( int i = 0; i < 24; ++i ) {
+	for( int i = 0; i < 48; ++i ) {
 		vertices[i] = tempVertices[i];
 	}
 

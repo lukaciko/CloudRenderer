@@ -80,7 +80,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	defineBillboardLayout( billboardShaderProgram );
 
 	// Create cube that encapsulates the grid for ray casting
-	float cubeVertices[24];
+	float cubeVertices[48];
 	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
 
 	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
@@ -132,8 +132,13 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 		"cubeVert" );
 	glEnableVertexAttribArray( posAttrib );
 	glVertexAttribPointer( posAttrib, 3, GL_FLOAT, GL_FALSE, 
-		3*sizeof(float), 0 );
+		6*sizeof(float), 0 );
 
+	GLint colAttrib = glGetAttribLocation( raycasterShaderProgram, 
+		"startColor" );
+	glEnableVertexAttribArray( colAttrib );
+	glVertexAttribPointer( colAttrib, 3, GL_FLOAT, GL_FALSE, 
+		6*sizeof(float), (void*)( 3*sizeof(float) ) );
 }
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
@@ -153,7 +158,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with white color
-	glClearColor( 1.0f, 1.0f, 0.0f, 1.0f );
+	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// Lock mutex because we will use data, which is shared with simulation
@@ -198,7 +203,7 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
-	glFrontFace( GL_CW );
+	//glFrontFace( GL_CW );
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();

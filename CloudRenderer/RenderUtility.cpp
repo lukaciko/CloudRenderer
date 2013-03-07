@@ -83,6 +83,16 @@ void deleteTextures() {
 	glDeleteTextures( 1, &volumeTexture );
 }
 
+
+void setUniform( const char* name, glm::vec3 vector ) {
+
+	GLuint program;
+    glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
+	GLint location = glGetUniformLocation( program, name );
+	glUniform3f( location, vector.x, vector.y, vector.z );
+
+}
+
 void setUniform( const char* name, glm::mat4 matrix ) {
 
 	GLuint program;

@@ -10,6 +10,7 @@ public:
 	void initialize( int, int, int );
 	void updateCamera();
 	glm::mat4 getLookAtMatrix();
+	glm::vec3 getViewDirection();
 private:
 	glm::vec4 cameraPoint;
 	glm::vec4 lookAtPoint;

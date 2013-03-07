@@ -11,6 +11,7 @@ void deleteVBOs();
 void deleteEBOs();
 void initializeTextures();
 void deleteTextures();
+void setUniform( const char*, glm::vec3 );
 void setUniform( const char*, glm::mat4 );
 
 #endif

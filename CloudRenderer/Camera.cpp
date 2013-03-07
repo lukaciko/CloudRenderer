@@ -37,6 +37,10 @@ glm::mat4 Camera::getLookAtMatrix() {
 
 }
 
+glm::vec3 Camera::getViewDirection() {
+	return v4tov3(cameraPoint - lookAtPoint);
+}
+
 void Camera::updateCamera() {
 
 	rightButtonUpdates();

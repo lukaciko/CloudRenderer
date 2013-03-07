@@ -200,6 +200,7 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "proj", perspectiveProjection );
+	setUniform( "viewDirection", camera.getViewDirection() );
 	
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );

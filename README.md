@@ -3,7 +3,7 @@ CloudRenderer
 
 Real-time 3D cloud simulation and rendering (work in progress)
 
-CloudRenderer is an OpenGL implementation of Dobashi's method for cloud rendering. Simulation is based on cellular automata, described by Nagel and extended by Dobashi et al. 
+CloudRenderer is an OpenGL implementation of methods for rendering clouds. Simulation is based on cellular automata, described by Nagel and extended by Dobashi et al. Rendering is based on volume ray casting.
 
 ### Libraries
 

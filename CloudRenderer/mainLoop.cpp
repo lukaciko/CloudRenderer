@@ -12,7 +12,7 @@ namespace loop {
 
 	// The size of the grid (must be powers of 2)
 	int gridX = 128;
-	int gridY = 32;
+	int gridY = 128;
 	int gridZ = 128;
 
 	// The radius of metaballs

@@ -158,7 +158,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with white color
-	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+	glClearColor( 0.7f, 0.7f, 0.7f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// Lock mutex because we will use data, which is shared with simulation
@@ -201,7 +201,7 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "proj", perspectiveProjection );
 	setUniform( "viewDirection", camera.getViewDirection() );
-	
+	std::cout << camera.getViewDirection().x <<camera.getViewDirection().y <<camera.getViewDirection().z << "\n";
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
 	//glFrontFace( GL_CW );
@@ -213,9 +213,9 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	// Convert float*** to float* (stream of data)
 	float* texData = new float[x*y*z];
 	int pos = 0;
-	for( int i = 0; i < x; ++i ) // TODO: might be wrong order
-		for( int j = 0; j < y; ++j ) 
-			for( int k = 0; k < z; ++k ) {
+	for( int i = 0; i != x; ++i ) // TODO: might be wrong order
+		for( int j = 0; j != y; ++j ) 
+			for( int k = 0; k != z; ++k ) {
 				texData[pos] = data->prevDen[i][j][k]; //TODO: interpolate
 				++pos;
 			}

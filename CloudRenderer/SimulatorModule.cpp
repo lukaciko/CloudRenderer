@@ -74,7 +74,7 @@ void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
 				act[i][j][k] = newAct;
 
 				// Scale probabilities with the distance from nearest elipsoid
-				float dist1 = distFrom(i, j, k, x/2, y/2, z/2);
+				float dist1 = distFrom(i, j, k, x/2, (y-5)/2, z/2);
 				float dist2 = distFrom(i, j, k, (x+75)/2, (y)/2, (z-9)/2);
 				float distance = dist1 < dist2 ? dist1 : dist2;
 

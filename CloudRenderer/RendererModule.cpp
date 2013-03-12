@@ -70,10 +70,10 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 		//	Vertex position		      Texcoords
 		-vertexSize,  vertexSize, 0.0f, 1.0f,  		// Vertex 1 (-X,  Y)
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
-		vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
-		vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
+		 vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
+		 vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
-		vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
+		 vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
 	};
 
 	billboardVBO = createVBO( vertices, sizeof( vertices ) );
@@ -149,13 +149,7 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	// Place the camera at the viewpoint
-	setUniform( "view", camera.getLookAtMatrix() );
-
-	// Set perspective projection
-	setUniform( "proj", perspectiveProjection );
-
+	
 	// Lock mutex because we will use data, which is shared with simulation
 	glfwLockMutex( simMutex );
 
@@ -202,14 +196,14 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 				++pos;
 			}
 
-			// Fill the data into 3D texture. A texture cell includes only one
-			// component (GL_RED = density, float). 
-			glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
-				GL_FLOAT, texData );
+	// Fill the data into 3D texture. A texture cell includes only one
+	// component (GL_RED = density, float). 
+	glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
+		GL_FLOAT, texData );
 
-			delete[] texData;
+	delete[] texData;
 
-			glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
+	glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
 
 } 
 
@@ -217,6 +211,9 @@ void RendererModule::renderSplattingClouds( SimulationData* data, double time ) 
 
 	glBindVertexArray( VAOs[0] );
 	glUseProgram( billboardShaderProgram );
+
+	setUniform( "view", camera.getLookAtMatrix() );
+	setUniform( "proj", perspectiveProjection );
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable( GL_BLEND );

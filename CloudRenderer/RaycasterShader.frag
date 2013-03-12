@@ -5,7 +5,10 @@ in vec3 color;
 uniform sampler3D density;
 uniform vec3 viewDirection;
 
-const float moveFactor = 0.05;
+const int numSamples = 100;
+const float maxDistance = sqrt(2.0);
+const float stepSize = maxDistance/numSamples;
+const float densityFactor = 0.15;
 
 out vec4 outColor;
 
@@ -21,19 +24,16 @@ void main() {
 	vec3 direction = viewDirection.zyx;
 	direction = vec3(direction.x, -direction.y, -direction.z);
 
-	for( int i = 0; i < 250; ++i ) {
+	for( int i = 0; i < numSamples; ++i ) {
 		
 		float cellDensity = texture( density, pos );
-		cellDensity *= 0.974;
+		cellDensity *= densityFactor;
 
 		colorSum += vec3( cellDensity, cellDensity, cellDensity );
 
-		pos += direction * moveFactor;
+		pos += direction * stepSize;
 
 	}
 
-	float l = length(color);
-	l /=2;
-
-	outColor = 0.2*vec4(color, 1.0) + 0.8*vec4( colorSum.x, 0.0, 0.0, 1.0 );
+	outColor = vec4( 1.0, 0.0, 1.0, colorSum.x );
 }

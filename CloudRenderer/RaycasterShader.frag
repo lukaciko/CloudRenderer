@@ -21,9 +21,9 @@ void main() {
 	vec3 direction = viewDirection.zyx;
 	direction = vec3(direction.x, -direction.y, -direction.z);
 
-	for( int i = 0; i < 1155; ++i ) {
+	for( int i = 0; i < 250; ++i ) {
 		
-		float cellDensity = texture( density, pos ).x;
+		float cellDensity = texture( density, pos );
 		cellDensity *= 0.974;
 
 		colorSum += vec3( cellDensity, cellDensity, cellDensity );

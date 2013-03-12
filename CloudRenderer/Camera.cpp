@@ -23,7 +23,7 @@ void Camera::initialize( int gridX, int gridY, int gridZ ) {
 
 	lookAtPoint.x += gridX / 2;
 	lookAtPoint.y += gridY / 2;
-	lookAtPoint.z += - gridZ / 2;
+	lookAtPoint.z += -gridZ / 2;
 
 }
 

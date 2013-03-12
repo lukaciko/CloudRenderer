@@ -13,8 +13,8 @@ public:
 	void terminate();
 	void draw( SimulationData*, GLFWmutex, double );
 private:
-	void shadeClouds( SimulationData*, double );
-	void renderClouds( SimulationData*, double );
+	void renderSplattingClouds( SimulationData*, double );
+	void renderRayCastingClouds( SimulationData*, double );
 	void defineBillboardLayout( GLuint ); 
 	void defineRaycasterLayout( GLuint );
 

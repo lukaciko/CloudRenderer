@@ -67,15 +67,15 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	// A single billboard data
 	float vertexSize = 1.8f;
 	float vertices[] = {
-	//	Vertex position		      Texcoords
+		//	Vertex position		      Texcoords
 		-vertexSize,  vertexSize, 0.0f, 1.0f,  		// Vertex 1 (-X,  Y)
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
-		 vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
-		 vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
+		vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
+		vertexSize,  vertexSize, 1.0f, 1.0f,		// Vertex 3 ( X,  Y)
 		-vertexSize, -vertexSize, 0.0f, 0.0f,		// Vertex 2 (-X, -Y)
-		 vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
+		vertexSize, -vertexSize, 1.0f, 0.0f		// Vertex 4 ( X, -Y)
 	};
-	
+
 	billboardVBO = createVBO( vertices, sizeof( vertices ) );
 	defineBillboardLayout( billboardShaderProgram );
 
@@ -90,7 +90,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	int cubeElements[36];
 	getCubeElements( cubeElements );
 	createEBO( cubeElements, sizeof( cubeElements ));
-	
+
 	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
 	perspectiveProjection = glm::perspective( 85.0f, 
@@ -127,7 +127,7 @@ void RendererModule::defineBillboardLayout( GLuint billboardShaderProgram ) {
 }
 
 void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
-	
+
 	GLint posAttrib = glGetAttribLocation( raycasterShaderProgram, 
 		"cubeVert" );
 	glEnableVertexAttribArray( posAttrib );
@@ -142,44 +142,26 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 }
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
-	
-	glBindVertexArray( VAOs[0] );
-	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
 
 	// Update the camera
 	camera.updateCamera();
-	
-	// Place the camera in the sun position
-	//setUniform( "view", sunTransformation );
-	setUniform( "view", camera.getLookAtMatrix() );
-	
-	// Set the parallel projection
-	//setUniform( "proj", orthographicProjection );
-	setUniform( "proj", perspectiveProjection );
-
-	// Clear the screen with white color
-	glClearColor( 0.7f, 0.7f, 0.7f, 1.0f );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	
-	// Lock mutex because we will use data, which is shared with simulation
-	glfwLockMutex( simMutex );
-
-	shadeClouds( data, time );
-
-	glBindVertexArray( VAOs[0] );
-	glUseProgram( billboardShaderProgram ); // TODO: get rid of one useprogram call
-
-	// Place the camera at the viewpoint
-	setUniform( "view", camera.getLookAtMatrix() );
-	
-	// Set perspective projection
-	setUniform( "proj", perspectiveProjection );
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
-	//glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	
-	renderClouds( data, time );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	// Place the camera at the viewpoint
+	setUniform( "view", camera.getLookAtMatrix() );
+
+	// Set perspective projection
+	setUniform( "proj", perspectiveProjection );
+
+	// Lock mutex because we will use data, which is shared with simulation
+	glfwLockMutex( simMutex );
+
+	renderRayCastingClouds( data, time );
+
+	renderSplattingClouds( data, time );
 
 	glfwUnlockMutex( simMutex );
 
@@ -193,7 +175,8 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 }
 
 // Shade clouds by performing volume ray casting
-void RendererModule::shadeClouds( SimulationData* data, double time ) {
+void RendererModule::renderRayCastingClouds( SimulationData* data, 
+											double time ) {
 
 	glBindVertexArray( VAOs[1] );
 	glUseProgram( raycasterShaderProgram );
@@ -201,15 +184,14 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "proj", perspectiveProjection );
 	setUniform( "viewDirection", camera.getViewDirection() );
-	std::cout << camera.getViewDirection().x <<camera.getViewDirection().y <<camera.getViewDirection().z << "\n";
+
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
-	//glFrontFace( GL_CW );
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
 	int z = data->getGridHeight();
-	
+
 	// Convert float*** to float* (stream of data)
 	float* texData = new float[x*y*z];
 	int pos = 0;
@@ -220,19 +202,22 @@ void RendererModule::shadeClouds( SimulationData* data, double time ) {
 				++pos;
 			}
 
-	// Fill the data into 3D texture. A texture cell includes only one
-	// component (GL_RED = density, float). 
-	glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
-		GL_FLOAT, texData );
+			// Fill the data into 3D texture. A texture cell includes only one
+			// component (GL_RED = density, float). 
+			glTexImage3D( GL_TEXTURE_3D, 0, GL_R32F, x, y, z, 0, GL_RED, 
+				GL_FLOAT, texData );
 
-	delete[] texData;
+			delete[] texData;
 
-	glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
+			glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
 
-}
+} 
 
-void RendererModule::renderClouds( SimulationData* data, double time ) { 
-	
+void RendererModule::renderSplattingClouds( SimulationData* data, double time ) { 
+
+	glBindVertexArray( VAOs[0] );
+	glUseProgram( billboardShaderProgram );
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable( GL_BLEND );
 	glDisable( GL_CULL_FACE );
@@ -244,14 +229,14 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
 	int z = data->getGridHeight();
-	
+
 	// Calculate relative difference for linear interpolation
 	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
 	if( relDiff > 1.0f )relDiff = 1.0f;
 
 	for( int i = 0; i < x; ++i ) 
 		for( int j = 0; j < y; ++j ) 
-			for( int k = 0; k < z; ++k ) {
+			for( int k = 0; k < z; ++k )
 				if( data->nextDen[i][j][k] > 0.0f ) {
 
 					// Lineary interpolate the density
@@ -268,7 +253,6 @@ void RendererModule::renderClouds( SimulationData* data, double time ) {
 						glDrawArrays( GL_TRIANGLES, 0, 6 );
 					}
 				}
-			}
 }
 
 void RendererModule::terminate() {

@@ -31,15 +31,17 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 		return false;
 	}
 
+	glfwOpenWindowHint( GLFW_OPENGL_VERSION_MAJOR, 3 );
+	glfwOpenWindowHint( GLFW_OPENGL_VERSION_MINOR, 2 );
 	glfwOpenWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwOpenWindowHint( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
-	glfwOpenWindowHint( GLFW_OPENGL_PROFILE, 0 );
 
 	if (glfwOpenWindow( windowWidth, windowHeight, 0, 0, 0, 0, 24, 8, 
 		GLFW_WINDOW ) != GL_TRUE) {
 			glfwTerminate();
 			return false;
 	}
+	
 	glfwSetWindowTitle( windowTitle );
 
 	// Initialize GLEW
@@ -50,6 +52,8 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 			glewGetErrorString(err) << "\n";
 		return false;
 	}
+	// Ignore the OpenGL error (1280) that glewInit() causes
+	glGetError();
 
 	std::cout << "Running OpenGL version " << glGetString(GL_VERSION) << "\n";
 

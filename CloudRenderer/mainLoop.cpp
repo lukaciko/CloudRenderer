@@ -61,6 +61,10 @@ namespace loop {
 	void GLFWCALL keyCallback( int key, int state ) {
 		if( key=='P' && state == GLFW_PRESS )
 			simPaused = !simPaused;
+		if ( key == '1' && state == GLFW_PRESS)
+			rendererModule->changeShowSplat();
+		if ( key == '2' && state == GLFW_PRESS)
+			rendererModule->changeShowVRC();
 	}
 
 	void run() {

@@ -22,7 +22,10 @@ GLuint VAOs [2];
 GLuint billboardVBO;
 GLuint cubeVBO;
 
-RendererModule::RendererModule() {};
+RendererModule::RendererModule() {
+	showSplat = true;
+	showVRC = true;
+};
 
 bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
@@ -108,7 +111,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	glm::vec3 lookAtPoint = glm::vec3( gridX/2, gridY/2, -gridZ/2 );
 	sunTransformation = glm::lookAt( sunPosition, 
 		lookAtPoint, glm::vec3(0, 0, 1));
-
+	
 	return true;
 
 }
@@ -146,7 +149,7 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 }
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
-
+	
 	// Update the camera
 	camera.updateCamera();
 
@@ -157,9 +160,11 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	// Lock mutex because we will use data, which is shared with simulation
 	glfwLockMutex( simMutex );
 
-	renderRayCastingClouds( data, time );
+	if( showVRC )
+		renderRayCastingClouds( data, time );
 
-	renderSplattingClouds( data, time );
+	if( showSplat )
+		renderSplattingClouds( data, time );
 
 	glfwUnlockMutex( simMutex );
 

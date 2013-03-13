@@ -12,11 +12,16 @@ public:
 	bool initialize( int, int, int );
 	void terminate();
 	void draw( SimulationData*, GLFWmutex, double );
+	inline void changeShowSplat() { showSplat = !showSplat; };
+	inline void changeShowVRC() { showVRC = !showVRC; };
 private:
 	void renderSplattingClouds( SimulationData*, double );
 	void renderRayCastingClouds( SimulationData*, double );
 	void defineBillboardLayout( GLuint ); 
 	void defineRaycasterLayout( GLuint );
+
+	bool showSplat;
+	bool showVRC;
 
 	Camera camera;
 	glm::mat4 perspectiveProjection;

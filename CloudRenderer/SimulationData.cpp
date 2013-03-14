@@ -6,8 +6,8 @@
 #include <random>
 #include <time.h>
 
-SimulationData::SimulationData(int gridLength, int gridWidth, int gridHeight, 
-	float R ) : x(gridLength), y(gridWidth), z(gridHeight), metaR(R) { 
+SimulationData::SimulationData( int gridLength, int gridWidth, int gridHeight )
+	: x(gridLength), y(gridWidth), z(gridHeight) { 
 
 	// Allocation of grids
 	hum = new bool ** [gridLength];
@@ -40,29 +40,6 @@ SimulationData::SimulationData(int gridLength, int gridWidth, int gridHeight,
 					act[i][j][k] = true;
 			}
 
-	// Metaball initialization
-	// Metaballs must cover all the area represented by the grid. It's easiest to
-	// treat them as regulal tetrahedrons - metaball is the circumsphere of a 
-	// tetrahedron and tetrahedrons form a triangulation of the area.
-
-	// The size of tetrahedrons edge
-	metaA = static_cast<float>( sqrt( 8.0/3.0 ) ) * metaR;
-	// The height of tetrahedrons face
-	metaV = static_cast<float>( sqrt( 2.0 ) ) * metaR;
-
-	// Number of metaballs in each direction
-	int metaX = ceil(x/metaV);
-	int metaY = ceil(y/metaV);
-	int metaZ = ceil(z/metaV);
-
-	for( int i = 0; i != metaX; ++i )
-		for( int j = 0; j != metaY; ++j )
-			for( int k = 0; k != metaZ; ++k ) {
-				glm::vec3 metaPos = glm::vec3( i*metaV, j*metaV, k*metaV );
-				metaballs.push_back( new Metaball( metaPos ) );
-			}
-
-
 }
 
 SimulationData::~SimulationData() {
@@ -82,9 +59,6 @@ SimulationData::~SimulationData() {
 	delete workDen;
 	delete prevDen;
 	delete nextDen;
-
-	for( metaVector::iterator i = metaballs.begin(); i != metaballs.end(); ++i )
-		delete * i;
 
 }
 

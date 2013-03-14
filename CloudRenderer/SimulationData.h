@@ -4,19 +4,13 @@
 #ifndef SIMULATIONDATA_H
 #define SIMULATIONDATA_H
 
-#include "Metaball.h"
-
 #include <vector>
-
-typedef std::vector<Metaball *> metaVector;
 
 class SimulationData {
 	friend class SimulatorModule;
 public:
-	SimulationData( int, int, int, float ); 
+	SimulationData( int, int, int ); 
 	~SimulationData();
-		
-	metaVector metaballs;
 
 	float *** nextDen; // Continous density distribution (protected with mutex)
 	GLfloat *** prevDen; // Previous continous density distribution
@@ -39,10 +33,6 @@ private:
 	bool *** fAc;
 
 	float *** workDen; // Private continous density distribution
-
-	const float metaR; // The radius of Metaballs
-	float metaA; // The distance between two metaball centers
-	float metaV; // The the horizontal distance between two metaball centers
 
 	// Creates a dynamic 3d boolean array of size x*y*z
 	template <typename T>

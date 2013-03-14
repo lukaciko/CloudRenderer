@@ -8,7 +8,7 @@
 
 class SimulatorModule {
 public:
-	SimulatorModule( float );
+	SimulatorModule();
 	void initialize();
 	void terminate();
 	// Part of the simulation step that can be done asynchronously
@@ -23,9 +23,6 @@ private:
 	float pActExt;
 	// Cloud extinction probability
 	float pCldExt;
-	// Noramlizing factor of the field function
-	float normalizingFactor;
-	float metaR;
 	int randomResolution;
 
 	// Simulate a cellular automata step
@@ -35,8 +32,6 @@ private:
 	void calculateDensity( int, int, int, bool ***, float *** );
 	// Calculate continous cloud density distribution for one cell
 	float singleDensity( int, int, int, int, int, int, bool ***, int);
-	// Updates metaball data based on continious density
-	void updateMetaballs( int, int, int, float ***, metaVector );
 	// Calculate field function
 	float fieldFunction( float );
 	// Override one array with another

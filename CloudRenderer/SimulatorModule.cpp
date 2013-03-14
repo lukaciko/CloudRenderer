@@ -13,15 +13,13 @@
 void computeFAc( bool ***, bool ***, int, int, int, int, int, int );
 float distFrom( int, int, int, int, int, int );
 
-SimulatorModule::SimulatorModule( float R ) {
+SimulatorModule::SimulatorModule() {
 	
 	pHumExt = 0.1f;
 	pActExt = 0.001f;
 	pCldExt = 0.1f;
 	randomResolution = 10000;
-	metaR = R;
-	normalizingFactor = 784.0f/405.0f * atan(1) * 4 * R;
-	
+
 	srand( time(NULL) );
 
 }
@@ -132,51 +130,6 @@ float SimulatorModule::singleDensity( int x, int y, int z, int i, int j, int k,
 				if( cld[kI][kJ][kK] ) sum += 1; // w_i=1; box filter
 			}
 	return sum/(S*S*S);
-}
-
-void SimulatorModule::updateMetaballs( int x, int y, int z, 
-									  float *** den, metaVector metaballs ) {
-	
-	for( metaVector::iterator i = metaballs.begin(); i != metaballs.end(); ++i ) {
-
-		glm::vec3 pos = (*i)->getPosition();
-		// Define kernel start and end
-		int startGridX = static_cast<int>( floor( pos.x - metaR) );
-		if( startGridX < 0 ) startGridX = 0;
-		int endGridX = static_cast<int>( ceil( pos.x + metaR ) );
-		if ( endGridX >= x ) endGridX = x-1;
-
-		int startGridY = static_cast<int>( floor( pos.y - metaR ) );
-		if( startGridY < 0 ) startGridY = 0;
-		int endGridY = static_cast<int>( ceil( pos.y + metaR ) );
-		if ( endGridY >= y ) endGridY = y-1;
-		
-		int startGridZ = static_cast<int>( floor( pos.z - metaR ) );
-		if( startGridZ < 0 ) startGridZ = 0;
-		int endGridZ = static_cast<int>( ceil( pos.z + metaR ) );
-		if ( endGridZ >= z ) endGridZ = z-1;
-		
-		float sum = 0;
-		for( int gridX = startGridX ; gridX < endGridX; ++gridX )
-			for( int gridY = startGridY; gridY < endGridY; ++gridY )
-				for( int gridZ = startGridZ; gridZ < endGridZ; ++gridZ ) {
-
-					// Distance from the center of the metaball
-					float r = sqrt( (pos.x-gridX) * (pos.x-gridX) + 
-						(pos.y-gridY) * (pos.y-gridY) + 
-						(pos.z-gridZ) * (pos.z-gridZ) );
-					float a = r/metaR;
-					if( r < metaR ) {
-						// Add field function multiplied with cloud density
-						sum += fieldFunction( a ) * den[gridX][gridY][gridZ];
-					}
-				}
-		// Multiply the sum with normalizing factor to get rho(x,t_i)
-		sum *= normalizingFactor;
-		// Finally, set the densitiy to the metaball
-		(*i)->setDensity( sum );
-	}
-
 }
 
 float SimulatorModule::fieldFunction( float a ) {

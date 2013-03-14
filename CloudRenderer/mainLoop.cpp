@@ -15,9 +15,6 @@ namespace loop {
 	int gridY = 128;
 	int gridZ = 128;
 
-	// The radius of metaballs
-	float R = 1;
-
 	int frameCap = 60;
 	double simulationCap = 2;
 	
@@ -70,7 +67,7 @@ namespace loop {
 	void run() {
 
 		// Allocate simulation data on the heap
-		simulationData = new SimulationData( gridX, gridY, gridZ, R );
+		simulationData = new SimulationData( gridX, gridY, gridZ );
 
 		// Initialize cloud renderer module
 		rendererModule = new RendererModule();
@@ -78,7 +75,7 @@ namespace loop {
 			return;
 
 		// Initialize cloud simulation module
-		simulatorModule = new SimulatorModule( R );
+		simulatorModule = new SimulatorModule();
 		simulatorModule->initialize();
 		
 		void* arguments [] = { &simulationData, &simulatorModule };

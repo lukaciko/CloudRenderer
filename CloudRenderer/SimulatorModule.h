@@ -15,7 +15,7 @@ public:
 	void stepAsych( SimulationData* data );
 	// Part of the simulation step that updates shared data and is protected with
 	// a mutex
-	void stepMutex( SimulationData* data, double );
+	void stepMutex( SimulationData* data, double startTime );
 private:
 	// Vapor extinction probability
 	float pHumExt;
@@ -26,16 +26,18 @@ private:
 	int randomResolution;
 
 	// Simulate a cellular automata step
-	void simulateCellular( int, int, int, bool ***, 
-		bool ***, bool ***, bool *** );
+	void simulateCellular( int x, int y, int z, bool *** hum, bool
+		*** act, bool *** cld, bool *** fAc );
 	// Calculate continous cloud density distribution for entire grid
-	void calculateDensity( int, int, int, bool ***, float *** );
+	void calculateDensity( int x, int y, int z, 
+		bool *** cld, float *** den );
 	// Calculate continous cloud density distribution for one cell
-	float singleDensity( int, int, int, int, int, int, bool ***, int);
+	float singleDensity( int x, int y, int z, int i, int j, int k,
+		bool *** cld, int S );
 	// Calculate field function
-	float fieldFunction( float );
+	float fieldFunction( float a );
 	// Override one array with another
-	void copyGrid( float***, float*** , int, int, int );
+	void copyGrid( float*** copyTo, float*** copyFrom, int x, int y, int z );
 
 };
 

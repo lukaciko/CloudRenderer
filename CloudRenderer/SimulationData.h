@@ -9,7 +9,7 @@
 class SimulationData {
 	friend class SimulatorModule;
 public:
-	SimulationData( int, int, int ); 
+	SimulationData( int gridLength, int gridWidth, int gridHeight ); 
 	~SimulationData();
 
 	float *** nextDen; // Continous density distribution (protected with mutex)
@@ -36,11 +36,11 @@ private:
 
 	// Creates a dynamic 3d boolean array of size x*y*z
 	template <typename T>
-	void make3Darray( T ***, int, int, int);
+	void make3Darray( T *** type, int x, int y, int z );
 	
 	// Frees the 3d boolean array memory
 	template <typename T>
-	void delete3Darray( T ***, int, int, int);
+	void delete3Darray( T *** type, int x, int y, int z );
 };
 
 #endif

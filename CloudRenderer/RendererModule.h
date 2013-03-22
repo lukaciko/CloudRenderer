@@ -9,16 +9,16 @@
 class RendererModule {
 public:
 	RendererModule();
-	bool initialize( int, int, int );
+	bool initialize( int gridX, int gridY, int gridZ );
 	void terminate();
-	void draw( SimulationData*, GLFWmutex, double );
+	void draw( SimulationData* data, GLFWmutex dataMutex, double frameTime );
 	inline void changeShowSplat() { showSplat = !showSplat; };
 	inline void changeShowVRC() { showVRC = !showVRC; };
 private:
-	void renderSplattingClouds( SimulationData*, double );
-	void renderRayCastingClouds( SimulationData*, double );
-	void defineBillboardLayout( GLuint ); 
-	void defineRaycasterLayout( GLuint );
+	void renderSplattingClouds( SimulationData* data, double frameTime );
+	void renderRayCastingClouds( SimulationData* data, double frameTime );
+	void defineBillboardLayout( GLuint shaderProgram ); 
+	void defineRaycasterLayout( GLuint shaderProgram );
 
 	bool showSplat;
 	bool showVRC;

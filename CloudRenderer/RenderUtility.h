@@ -5,13 +5,13 @@
 
 #include <glm\glm.hpp>
 
-GLuint createVBO( float [], int );
-GLuint createEBO( int [], int );
+GLuint createVBO( float vertices [], int size );
+GLuint createEBO( int elements [], int size );
 void deleteVBOs();
 void deleteEBOs();
 void initializeTextures();
 void deleteTextures();
-void setUniform( const char*, glm::vec3 );
-void setUniform( const char*, glm::mat4 );
+void setUniform( const char* name, glm::vec3 vector );
+void setUniform( const char* name, glm::mat4 matrix );
 
 #endif

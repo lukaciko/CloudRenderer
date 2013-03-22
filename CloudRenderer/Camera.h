@@ -7,7 +7,7 @@
 class Camera {
 public:
 	Camera();
-	void initialize( int, int, int );
+	void initialize( int gridX, int gridY, int gridZ );
 	void updateCamera();
 	glm::mat4 getLookAtMatrix();
 	glm::vec3 getViewDirection();
@@ -21,8 +21,8 @@ private:
 	int prevWheel;
 	bool prevMousePressed;
 
-	glm::vec3 v4tov3( glm::vec4 );
-	glm::vec4 v3tov4( glm::vec3 );
+	glm::vec3 v4tov3( glm::vec4 vector );
+	glm::vec4 v3tov4( glm::vec3 vector );
 
 	void rightButtonUpdates();
 	void scrollWheelUpdates();

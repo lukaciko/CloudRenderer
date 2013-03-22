@@ -18,13 +18,13 @@ SimulationData::SimulationData( int gridLength, int gridWidth, int gridHeight )
 	prevDen = new float ** [gridLength];
 	nextDen = new float ** [gridLength];
 
-	make3Darray( hum, x, y, z );
-	make3Darray( cld, x, y, z );
-	make3Darray( act, x, y, z );
-	make3Darray( fAc, x, y, z );
-	make3Darray( workDen, x, y, z );
-	make3Darray( prevDen, x, y, z );
-	make3Darray( nextDen, x, y, z );
+	make3Darray( hum );
+	make3Darray( cld );
+	make3Darray( act );
+	make3Darray( fAc );
+	make3Darray( workDen );
+	make3Darray( prevDen );
+	make3Darray( nextDen );
 
 	srand( time(NULL) );
 	prevTime = 0; // TODO: set to glfw time
@@ -45,13 +45,13 @@ SimulationData::SimulationData( int gridLength, int gridWidth, int gridHeight )
 SimulationData::~SimulationData() {
 
 	// Deallocate the array memory and delete the pointers
-	delete3Darray( hum, x, y, z );
-	delete3Darray( cld, x, y, z );
-	delete3Darray( act, x, y, z );
-	delete3Darray( fAc, x, y, z );
-	delete3Darray( workDen, x, y, z );
-	delete3Darray( prevDen, x, y, z );
-	delete3Darray( nextDen, x, y, z );
+	delete3Darray( hum );
+	delete3Darray( cld );
+	delete3Darray( act );
+	delete3Darray( fAc );
+	delete3Darray( workDen );
+	delete3Darray( prevDen );
+	delete3Darray( nextDen );
 	delete hum;
 	delete cld;
 	delete act;
@@ -64,7 +64,7 @@ SimulationData::~SimulationData() {
 
 
 template <typename T>
-void SimulationData::make3Darray( T *** arr, int x, int y, int z ) {
+void SimulationData::make3Darray( T *** arr ) {
 
 	// Allocation of a 3d array
 	for( int i = 0; i != x; ++i ) {
@@ -81,7 +81,7 @@ void SimulationData::make3Darray( T *** arr, int x, int y, int z ) {
 }
 
 template <typename T>
-void SimulationData::delete3Darray( T *** arr, int x, int y, int z ) {
+void SimulationData::delete3Darray( T *** arr ) {
 
 	// Deallocation of a 3d array
 	for( int i = 0; i != x; ++i ) {

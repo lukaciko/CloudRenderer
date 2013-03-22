@@ -47,9 +47,7 @@ void SimulatorModule::stepMutex( SimulationData* data, double time ) {
 	// Update times
 	data->prevTime = data->nextTime;
 	data->nextTime = time;
-
-	//updateMetaballs( data->x, data->y, data->z, data->den, data->metaballs );
-
+	
 }
 
 void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool

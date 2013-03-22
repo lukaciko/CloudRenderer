@@ -36,11 +36,11 @@ private:
 
 	// Creates a dynamic 3d boolean array of size x*y*z
 	template <typename T>
-	void make3Darray( T *** type, int x, int y, int z );
+	void make3Darray( T *** type );
 	
 	// Frees the 3d boolean array memory
 	template <typename T>
-	void delete3Darray( T *** type, int x, int y, int z );
+	void delete3Darray( T *** type );
 };
 
 #endif

@@ -83,8 +83,25 @@ void deleteTextures() {
 	glDeleteTextures( 1, &volumeTexture );
 }
 
+void setUniform( const char* name, const float value ) {
 
-void setUniform( const char* name, glm::vec3 vector ) {
+	GLuint program;
+    glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
+	GLint location = glGetUniformLocation( program, name );
+	glUniform1f( location, value );
+
+}
+
+void setUniform( const char* name, const glm::vec2 vector ) {
+
+	GLuint program;
+    glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
+	GLint location = glGetUniformLocation( program, name );
+	glUniform2f( location, vector.x, vector.y );
+
+}
+
+void setUniform( const char* name, const glm::vec3 vector ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
@@ -93,7 +110,7 @@ void setUniform( const char* name, glm::vec3 vector ) {
 
 }
 
-void setUniform( const char* name, glm::mat4 matrix ) {
+void setUniform( const char* name, const glm::mat4 matrix ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );

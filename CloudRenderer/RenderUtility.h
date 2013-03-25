@@ -11,7 +11,9 @@ void deleteVBOs();
 void deleteEBOs();
 void initializeTextures();
 void deleteTextures();
-void setUniform( const char* name, glm::vec3 vector );
-void setUniform( const char* name, glm::mat4 matrix );
+void setUniform( const char* name, const float value );
+void setUniform( const char* name, const glm::vec2 vector );
+void setUniform( const char* name, const glm::vec3 vector );
+void setUniform( const char* name, const glm::mat4 matrix );
 
 #endif

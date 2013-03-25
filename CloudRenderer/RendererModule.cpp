@@ -22,6 +22,9 @@ GLuint VAOs [2];
 GLuint billboardVBO;
 GLuint cubeVBO;
 
+float fieldOfView = 85.0f;
+float focalLenght = 1.0f / tan( fieldOfView / 2.0f );
+
 RendererModule::RendererModule() {
 	showSplat = true;
 	showVRC = true;
@@ -186,6 +189,8 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "proj", perspectiveProjection );
+	setUniform( "focalLength", focalLenght );
+	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
 	setUniform( "viewDirection", camera.getViewDirection() );
 
 	glEnable( GL_CULL_FACE );

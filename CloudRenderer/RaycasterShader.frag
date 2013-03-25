@@ -3,6 +3,8 @@
 in vec3 color;
 
 uniform sampler3D density;
+uniform float focalLength;
+uniform vec2 screenSize;
 uniform vec3 viewDirection;
 
 const int numSamples = 100;

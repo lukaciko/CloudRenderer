@@ -7,6 +7,7 @@ uniform sampler3D density;
 uniform float focalLength;
 uniform vec2 screenSize;
 uniform vec3 viewDirection;
+uniform vec3 eyePosition;
 
 const int numSamples = 100;
 const float maxDistance = sqrt(2.0);
@@ -27,7 +28,8 @@ void main() {
 	vec3 direction;
 	direction.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
 	direction.z = - focalLength;
-	//direction = ( vec4( direction, 0 ) * view ).xyz;
+	direction = ( vec4( direction, 0 ) * view ).xyz;
+	direction = normalize( direction );	
 
 
 	//direction = direction.zyx;
@@ -46,5 +48,5 @@ void main() {
 
 	outColor = vec4( 1.0, 0.0, 1.0, colorSum.x );
 	vec4 debug = vec4( direction, 1.0 );
-	outColor = mix(outColor, debug, 0.6);
+	outColor = mix(outColor, debug, 0);
 }

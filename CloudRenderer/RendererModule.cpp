@@ -23,7 +23,7 @@ GLuint billboardVBO;
 GLuint cubeVBO;
 
 float fieldOfView = 85.0f;
-float focalLenght = 1.0f / tan( fieldOfView / 2.0f );
+float focalLength = 1.0f / tan( fieldOfView / 2.0f / 360 * 2 * 3.14f );
 
 RendererModule::RendererModule() {
 	showSplat = true;
@@ -189,9 +189,10 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "proj", perspectiveProjection );
-	setUniform( "focalLength", focalLenght );
+	setUniform( "focalLength", focalLength );
 	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
 	setUniform( "viewDirection", camera.getViewDirection() );
+	setUniform( "eyePosition", camera.getEyeLocation() );
 
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );

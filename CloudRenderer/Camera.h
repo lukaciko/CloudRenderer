@@ -11,6 +11,7 @@ public:
 	void updateCamera();
 	glm::mat4 getLookAtMatrix();
 	glm::vec3 getViewDirection();
+	inline glm::vec3 getEyeLocation() { return v4tov3(cameraPoint); };
 private:
 	glm::vec4 cameraPoint;
 	glm::vec4 lookAtPoint;

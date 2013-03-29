@@ -3,8 +3,8 @@
 
 // Stores vertex and element data of a cube
 
-void getCubeVertices( int startX, int stopX, int startY, int stopY, 
-					 int startZ, int stopZ, float vertices [] ) ;
+void getCubeVertices( float startX, float stopX, float startY, float stopY, 
+					 float startZ, float stopZ, float vertices [] ) ;
 void getCubeElements( int elements [] );
 
 

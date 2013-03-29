@@ -15,7 +15,7 @@ uniform vec3 eyePosition; // In world space
 uniform float near;
 uniform float far;
 
-const int numSamples = 300;
+const int numSamples = 1300;
 const float maxDistance = sqrt(2.0);// ne cist ker je kocka
 const float stepSize = maxDistance/numSamples;
 const float densityFactor = 0.15;
@@ -32,7 +32,7 @@ void main() {
 	vec3 direction;
 	direction.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
 	direction.xy *= focalLength; // tan(fov/2)
-	direction.z = 1;
+	direction.z = -1;
 
 	// Transform direction to world space
 	direction = ( viewInverse * vec4( direction, 0 ) ).xyz;
@@ -40,9 +40,7 @@ void main() {
 
 	for( int i = 0; i < numSamples; ++i ) {
 		
-		vec3 location = (pos+64)/128;
-		location.z = -location.z;
-		float cellDensity = texture( density, location );
+		float cellDensity = texture( density, pos );
 		cellDensity *= densityFactor;
 		colorSum += vec3( cellDensity, cellDensity, cellDensity );
 

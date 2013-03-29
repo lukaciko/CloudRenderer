@@ -8,7 +8,7 @@ Camera::Camera() {
 
 	cameraPoint = glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
 	lookAtPoint = glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
-	upAxis = glm::vec4( 0.0f, 10.0f, 0.0f, 0.0f );
+	upAxis = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
 	prevWheel = 0;
 	prevMousePressed = false;
@@ -18,13 +18,13 @@ Camera::Camera() {
 void Camera::initialize( int gridX, int gridY, int gridZ ) {
 
 	// Look vector located at the middle of the grid
-	cameraPoint.x += gridX / 2;
-	cameraPoint.y += gridY / 2;
-	cameraPoint.z += gridZ / 2;
+	cameraPoint.x += 0.5;
+	cameraPoint.y += 0.5;
+	cameraPoint.z += -1.5;
 
-	lookAtPoint.x += gridX / 2;
-	lookAtPoint.y += gridY / 2;
-	lookAtPoint.z += -gridZ / 2;
+	lookAtPoint.x += 0.5;
+	lookAtPoint.y += 0.5;
+	lookAtPoint.z += 0.5;
 
 }
 
@@ -103,7 +103,7 @@ void Camera::rightButtonUpdates() {
 void Camera::scrollWheelUpdates() {
 	float scrollFactor = -0.03f;
 	// Limit the distance of cameraPoint and lookAtPoint
-	float minDSize = 25.0f;
+	float minDSize = 0.25f;
 	int newWheel = glfwGetMouseWheel();
 	int wheelDiff = newWheel - prevWheel;
 	if( wheelDiff ) {

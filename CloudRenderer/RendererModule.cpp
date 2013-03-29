@@ -22,8 +22,8 @@ GLuint VAOs [2];
 GLuint billboardVBO;
 GLuint cubeVBO;
 
-float nearPlane = 10.0f;
-float farPlane = 300.0f;
+float nearPlane = 0.1f;
+float farPlane = 25.0f;
 
 float fieldOfView = 85.0f;
 float focalLength = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f ); //todo:rename
@@ -94,7 +94,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 	// Create cube that encapsulates the grid for ray casting
 	float cubeVertices[48];
-	getCubeVertices( 0, gridX, 0, gridY, 0, gridZ, cubeVertices );
+	getCubeVertices( 0, 1, 0, 1, 0, 1, cubeVertices );
 
 	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
 	glBindVertexArray( VAOs[1] );

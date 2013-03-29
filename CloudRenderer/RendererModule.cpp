@@ -22,8 +22,11 @@ GLuint VAOs [2];
 GLuint billboardVBO;
 GLuint cubeVBO;
 
+float nearPlane = 10.0f;
+float farPlane = 300.0f;
+
 float fieldOfView = 85.0f;
-float focalLength = 1.0f / tan( fieldOfView / 2.0f / 360 * 2 * 3.14f );
+float focalLength = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f ); //todo:rename
 
 RendererModule::RendererModule() {
 	showSplat = true;
@@ -104,7 +107,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
 	perspectiveProjection = glm::perspective( 85.0f, 
-		(float)windowWidth / (float)windowHeight, 0.4f, 300.0f );
+		(float)windowWidth / (float)windowHeight, nearPlane, farPlane );
 	orthographicProjection = glm::ortho( -(gridX/2.0f), gridX/2.0f, 
 		-(gridY/2.0f), gridY/2.0f, 0.0f, 500.0f ); 
 
@@ -193,8 +196,9 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 	setUniform( "focalLength", focalLength );
 	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
 	setUniform( "viewDirection", camera.getViewDirection() );
-	glm::vec4 a =  glm::vec4(camera.getEyeLocation(),1.0f);
-	setUniform( "eyePosition", glm::vec3(a.x, a.y, a.z) );
+	setUniform( "eyePosition", camera.getEyeLocation() );
+	setUniform( "near", nearPlane );
+	setUniform( "far", farPlane );
 
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );

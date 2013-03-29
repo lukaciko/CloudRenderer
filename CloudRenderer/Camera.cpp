@@ -20,6 +20,7 @@ void Camera::initialize( int gridX, int gridY, int gridZ ) {
 	// Look vector located at the middle of the grid
 	cameraPoint.x += gridX / 2;
 	cameraPoint.y += gridY / 2;
+	cameraPoint.z += gridZ / 2;
 
 	lookAtPoint.x += gridX / 2;
 	lookAtPoint.y += gridY / 2;

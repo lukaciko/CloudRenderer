@@ -144,7 +144,7 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 	glVertexAttribPointer( posAttrib, 3, GL_FLOAT, GL_FALSE, 
 		6*sizeof(float), 0 );
 
-	GLint colAttrib = glGetAttribLocation( raycasterShaderProgram, 
+	GLint colAttrib = glGetAttribLocation( raycasterShaderProgram, //TODO: get rid
 		"startColor" );
 	glEnableVertexAttribArray( colAttrib );
 	glVertexAttribPointer( colAttrib, 3, GL_FLOAT, GL_FALSE, 
@@ -186,13 +186,15 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 
 	glBindVertexArray( VAOs[1] );
 	glUseProgram( raycasterShaderProgram );
-
 	setUniform( "view", camera.getLookAtMatrix() );
+	setUniform( "viewInverse", glm::inverse(camera.getLookAtMatrix()) );
 	setUniform( "proj", perspectiveProjection );
+	setUniform( "projInverse", glm::inverse(perspectiveProjection) );
 	setUniform( "focalLength", focalLength );
 	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
 	setUniform( "viewDirection", camera.getViewDirection() );
-	setUniform( "eyePosition", camera.getEyeLocation() );
+	glm::vec4 a =  glm::vec4(camera.getEyeLocation(),1.0f);
+	setUniform( "eyePosition", glm::vec3(a.x, a.y, a.z) );
 
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );

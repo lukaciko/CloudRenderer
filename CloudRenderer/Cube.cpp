@@ -7,16 +7,16 @@ void getCubeVertices( float startX, float stopX, float startY, float stopY,
 					 float startZ, float stopZ, float vertices [] ) {
 
 	float tempVertices [] = {
-		startX, startY, startZ, 0.0f, 0.0f, 0.0f,
-		stopX,  startY, startZ, 1.0f, 0.0f, 0.0f,
-		startX, stopY,  startZ, 0.0f, 1.0f, 0.0f,
-		stopX,  stopY,  startZ, 1.0f, 1.0f, 0.0f,
-		startX, startY, stopZ,  0.0f, 0.0f, 1.0f,
-		stopX,  startY, stopZ,  1.0f, 0.0f, 1.0f,
-		startX, stopY,  stopZ,  0.0f, 1.0f, 1.0f,
-		stopX,  stopY,  stopZ,  1.0f, 1.0f, 1.0f
+		startX, startY, startZ,
+		stopX,  startY, startZ,
+		startX, stopY,  startZ,
+		stopX,  stopY,  startZ,
+		startX, startY, stopZ,
+		stopX,  startY, stopZ,
+		startX, stopY,  stopZ,
+		stopX,  stopY,  stopZ
 	};
-	for( int i = 0; i < 48; ++i ) {
+	for( int i = 0; i < 24; ++i ) {
 		vertices[i] = tempVertices[i];
 	}
 

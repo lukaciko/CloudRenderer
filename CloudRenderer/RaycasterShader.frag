@@ -2,21 +2,20 @@
 
 in vec3 color;
 
-uniform mat4 view;
-uniform mat4 viewInverse;
-uniform mat4 proj;
-uniform mat4 projInverse;
 uniform sampler3D density;
-uniform float focalLength; // ni res focal length ampak tan(fov/2)
+
+// tan( field of view / 2 )
+uniform float tanFOV; 
+// Camera position in world space
+uniform vec3 eyePosition;
 uniform vec2 screenSize;
-uniform vec3 viewDirection;
-uniform vec3 eyePosition; // In world space
+uniform mat4 viewInverse;
 
 uniform float near;
 uniform float far;
 
-const int numSamples = 1300;
-const float maxDistance = sqrt(2.0);// ne cist ker je kocka
+const int numSamples = 300;
+const float maxDistance = sqrt(3.0); // Length of a cube diagonal
 const float stepSize = maxDistance/numSamples;
 const float densityFactor = 0.15;
 
@@ -31,7 +30,7 @@ void main() {
 	// Direction in view splace
 	vec3 direction;
 	direction.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
-	direction.xy *= focalLength; // tan(fov/2)
+	direction.xy *= tanFOV; // tan(fov/2)
 	direction.z = -1;
 
 	// Transform direction to world space
@@ -48,7 +47,7 @@ void main() {
 
 	}
 
-	outColor = vec4( 1.0, 0.0, 1.0, colorSum.x );
+	outColor = vec4( 1.0, 1.0, 1.0, colorSum.x );
 	vec4 debug = vec4( direction, 1.0 );
 	outColor = mix(outColor, debug, 0.3);
 }

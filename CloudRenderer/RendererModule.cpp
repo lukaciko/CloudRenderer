@@ -93,7 +93,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	defineBillboardLayout( billboardShaderProgram );
 
 	// Create cube that encapsulates the grid for ray casting
-	float cubeVertices[48];
+	float cubeVertices[24];
 	getCubeVertices( 0, 1, 0, 1, 0, 1, cubeVertices );
 
 	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
@@ -145,13 +145,8 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 		"cubeVert" );
 	glEnableVertexAttribArray( posAttrib );
 	glVertexAttribPointer( posAttrib, 3, GL_FLOAT, GL_FALSE, 
-		6*sizeof(float), 0 );
+		3*sizeof(float), 0 );
 
-	GLint colAttrib = glGetAttribLocation( raycasterShaderProgram, //TODO: get rid
-		"startColor" );
-	glEnableVertexAttribArray( colAttrib );
-	glVertexAttribPointer( colAttrib, 3, GL_FLOAT, GL_FALSE, 
-		6*sizeof(float), (void*)( 3*sizeof(float) ) );
 }
 
 void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
@@ -192,10 +187,8 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "viewInverse", glm::inverse(camera.getLookAtMatrix()) );
 	setUniform( "proj", perspectiveProjection );
-	setUniform( "projInverse", glm::inverse(perspectiveProjection) );
-	setUniform( "focalLength", focalLength );
+	setUniform( "tanFOV", focalLength );
 	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
-	setUniform( "viewDirection", camera.getViewDirection() );
 	setUniform( "eyePosition", camera.getEyeLocation() );
 	setUniform( "near", nearPlane );
 	setUniform( "far", farPlane );

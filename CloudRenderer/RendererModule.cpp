@@ -26,7 +26,7 @@ float nearPlane = 0.1f;
 float farPlane = 25.0f;
 
 float fieldOfView = 85.0f;
-float focalLength = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f ); //todo:rename
+float tanFOV = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f );
 
 RendererModule::RendererModule() {
 	showSplat = true;
@@ -118,6 +118,14 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 	sunTransformation = glm::lookAt( sunPosition, 
 		lookAtPoint, glm::vec3(0, 0, 1));
 	
+	interpolatedData = new float ** [gridX];
+	for( int i = 0; i != gridX; ++i ) {
+		interpolatedData[i] = new float*[gridY];
+		for (int j = 0; j != gridY; ++j ) 
+			interpolatedData[i][j] = new float[gridZ];
+	}
+
+
 	return true;
 
 }
@@ -161,6 +169,8 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 	// Lock mutex because we will use data, which is shared with simulation
 	glfwLockMutex( simMutex );
 
+	interpolateCloudData( data, time );
+
 	if( showVRC )
 		renderRayCastingClouds( data, time );
 
@@ -178,6 +188,30 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 }
 
+void RendererModule::interpolateCloudData( SimulationData* data,  double time ) {
+
+	int x = data->getGridLength();
+	int y = data->getGridWidth();
+	int z = data->getGridHeight();
+
+	// Calculate relative difference for linear interpolation
+	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
+	if( relDiff > 1.0f )relDiff = 1.0f;
+
+	for( int i = 0; i < x; ++i ) 
+		for( int j = 0; j < y; ++j ) 
+			for( int k = 0; k < z; ++k )
+				if( data->nextDen[i][j][k] > 0.0f ) {
+
+					// Lineary interpolate the density
+					interpolatedData[i][j][k] = data->prevDen[i][j][k] + relDiff
+						* (data->nextDen[i][j][k] - data->prevDen[i][j][k] );
+
+				}
+				else
+					interpolatedData[i][j][k] = 0.0f;
+}
+
 // Shade clouds by performing volume ray casting
 void RendererModule::renderRayCastingClouds( SimulationData* data, 
 											double time ) {
@@ -187,7 +221,7 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 	setUniform( "view", camera.getLookAtMatrix() );
 	setUniform( "viewInverse", glm::inverse(camera.getLookAtMatrix()) );
 	setUniform( "proj", perspectiveProjection );
-	setUniform( "tanFOV", focalLength );
+	setUniform( "tanFOV", tanFOV );
 	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
 	setUniform( "eyePosition", camera.getEyeLocation() );
 	setUniform( "near", nearPlane );
@@ -203,10 +237,10 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 	// Convert float*** to float* (stream of data)
 	float* texData = new float[x*y*z];
 	int pos = 0;
-	for( int i = 0; i != x; ++i ) // TODO: might be wrong order
+	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j ) 
 			for( int k = 0; k != z; ++k ) {
-				texData[pos] = data->prevDen[i][j][k]; //TODO: interpolate
+				texData[pos] = interpolatedData[i][j][k];
 				++pos;
 			}
 
@@ -248,21 +282,14 @@ void RendererModule::renderSplattingClouds( SimulationData* data, double time ) 
 	for( int i = 0; i < x; ++i ) 
 		for( int j = 0; j < y; ++j ) 
 			for( int k = 0; k < z; ++k )
-				if( data->nextDen[i][j][k] > 0.0f ) {
+				if( interpolatedData[i][j][k] > 0.0f) {
+					// Build a translation (model) matrix in the shader, 
+					// because it's a lot faster than creating the matrix 
+					// here. 
+					glUniform3f( uniPosition, i, j, -k );
+					glUniform1f( uniAlpha, interpolatedData[i][j][k] );
 
-					// Lineary interpolate the density
-					float density = data->prevDen[i][j][k] + relDiff
-						* (data->nextDen[i][j][k] - data->prevDen[i][j][k] );
-
-					if( density > 0.0f) {
-						// Build a translation (model) matrix in the shader, 
-						// because it's a lot faster than creating the matrix 
-						// here. 
-						glUniform3f( uniPosition, i, j, -k );
-						glUniform1f( uniAlpha, density );
-
-						glDrawArrays( GL_TRIANGLES, 0, 6 );
-					}
+					glDrawArrays( GL_TRIANGLES, 0, 6 );
 				}
 }
 

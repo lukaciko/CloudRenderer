@@ -15,13 +15,16 @@ public:
 	inline void changeShowSplat() { showSplat = !showSplat; };
 	inline void changeShowVRC() { showVRC = !showVRC; };
 private:
-	void renderSplattingClouds( SimulationData* data, double frameTime );
+	void interpolateCloudData( SimulationData* data, double frameTime );
+	void renderSplattingClouds( SimulationData* data, double frameTime ); //TODO: delete frametime
 	void renderRayCastingClouds( SimulationData* data, double frameTime );
 	void defineBillboardLayout( GLuint shaderProgram ); 
 	void defineRaycasterLayout( GLuint shaderProgram );
 
 	bool showSplat;
 	bool showVRC;
+
+	float*** interpolatedData;
 
 	Camera camera;
 	glm::mat4 perspectiveProjection;

@@ -49,5 +49,5 @@ void main() {
 
 	outColor = vec4( 1.0, 1.0, 1.0, colorSum.x );
 	vec4 debug = vec4( direction, 1.0 );
-	outColor = mix(outColor, debug, 0.3);
+	outColor = mix(outColor, debug, 0);
 }

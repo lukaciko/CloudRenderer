@@ -20,8 +20,8 @@ const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
-const float densityFactor = 0.15;
-const float attenuationFactor = 1;
+const float densityFactor = 0.35;
+const float attenuationFactor = 3;
 
 out vec4 outColor;
 
@@ -43,39 +43,45 @@ void main() {
 	
 	Ray viewRay = Ray( eyePosition, normalize( viewDirection ) );	
 
-	vec4 colorSum = vec4(0.0);
+	float colorAlpha = 0;
+	float color = 0;
 	vec3 pos = viewRay.origin;
+	//TODO: move to cube beginning
 		
 	for( int i = 0; i < viewSamples; ++i ) {
 		
 		float cellDensity = texture( density, pos );
-		if( cellDensity > 0.05 ) {
+		//if( cellDensity > 0.05 ) {
 			
 			cellDensity *= densityFactor;
 		
-			Ray lightRay = Ray( pos, normalize( sunPosition - pos ) );
+			Ray lightRay = Ray( pos, normalize( sunPosition ) );
 
 			float attenuation = 1;
 			vec3 lightPos = pos;
 			// Calculate light attenuation
 			for( int j = 0; j < lightSamples; ++j ) {
 
-				attenuation *= 1 - texture( density, lightPos ) * 5;
+				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.05;
 				// TODO: optimize - check for break
 				lightPos += lightRay.direction * lightStepSize;
 
 			}
 
-			
-			colorSum += vec4( vec3(attenuation), cellDensity );
+			colorAlpha += cellDensity;
 
-		}
+			// add color depending on cell density and attenuation
+			if( cellDensity > 0.001 )
+				color = mix( color, attenuation, cellDensity / colorAlpha );
+				//TODO: ones in front count more
+
+		//}
 
 		pos += viewRay.direction * viewStepSize;
 
 	}
 
-	outColor = colorSum;
+	outColor = vec4( vec3(color), colorAlpha );
 	vec4 debug = vec4( viewRay.direction, 1.0 );
 	outColor = mix(outColor, debug, 0);
 }

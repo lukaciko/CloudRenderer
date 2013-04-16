@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cloud.h" />
     <ClInclude Include="RenderUtility.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SimulationData.h" />
@@ -98,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="CloudRenderer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="RendererModule.cpp" />

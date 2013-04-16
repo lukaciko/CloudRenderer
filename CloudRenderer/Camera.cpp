@@ -4,16 +4,14 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera() {
+Camera::Camera():
 
-	cameraPoint = glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
-	lookAtPoint = glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
-	upAxis = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
+	cameraPoint( glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f ) ),
+	lookAtPoint( glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f ) ),
+	upAxis( glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f ) ),
 
-	prevWheel = 0;
-	prevMousePressed = false;
-
-}
+	prevWheel( 0 ),
+	prevMousePressed( false ) {}
 
 void Camera::initialize( int gridX, int gridY, int gridZ ) {
 

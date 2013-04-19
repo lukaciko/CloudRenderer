@@ -14,13 +14,14 @@
 void computeFAc( bool ***, bool ***, int, int, int, int, int, int );
 float distFrom( int, int, int, int, int, int );
 
-SimulatorModule::SimulatorModule() {
-	
-	pHumExt = 0.1f;
-	pActExt = 0.001f;
-	pCldExt = 0.1f;
-	randomResolution = 10000;
-
+SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
+	x( x ),
+	y( y ),
+	z( z ),
+	pHumExt( 0.1f ),
+	pActExt( 0.001f ),
+	pCldExt( 0.1f ),
+	randomResolution( 10000 ) {
 	srand( time(NULL) );
 
 }
@@ -33,29 +34,29 @@ void SimulatorModule::terminate() {
 
 void SimulatorModule::stepAsych( SimulationData* data ) {
 	
-	simulateCellular( data->x, data->y, data->z, data->hum, 
+	simulateCellular( data->hum, 
 		data->act, data->cld, data->fAc );
 	
-	calculateDensity( data->x, data->y, data->z, data->cld, data->workDen );
+	calculateDensity( data->cld, data->workDen );
 
 }
 
-void SimulatorModule::stepMutex( SimulationData* data, double time ) {
+void SimulatorModule::stepMutex( SimulationData* data, const double time ) {
 	
 	// Copy nextDen to prevDen and workDen to nextDen
-	copyGrid( data->prevDen, data->nextDen, data->x, data->y, data->z );
-	copyGrid( data->nextDen, data->workDen, data->x, data->y, data->z );
+	copyGrid( data->prevDen, data->nextDen );
+	copyGrid( data->nextDen, data->workDen );
 	// Update times
 	data->prevTime = data->nextTime;
 	data->nextTime = time;
 	
 }
 
-void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
-									  *** act, bool *** cld, bool *** fAc ) {
+void SimulatorModule::simulateCellular( bool *** hum, bool *** act, 
+									    bool *** cld, bool *** fAc ) {
 	
 	if( rand() % 5 == 0 )
-		createRandomCloud( x, y, z );
+		createRandomCloud();
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -111,31 +112,31 @@ void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
 
 }
 
-void SimulatorModule::createRandomCloud( int x, int y, int z ) {
+void SimulatorModule::createRandomCloud() {
 	
 	if( clouds.size() > 10 )
 		return;
 
-	glm::vec3 position = glm::vec3( rand() % (x - 30 ) + 15, rand() % (y - 30 ) + 15, rand() % (z - 30 ) + 15 ); 
+	glm::vec3 position = glm::vec3( rand() % (x - 30 ) + 15, 
+		rand() % (y - 30 ) + 15, rand() % (z - 30 ) + 15 ); 
 	int size = rand() % 26 + 10;
 	Cloud cloud = Cloud( position, size );
 	clouds.push_back( cloud ); // TODO: dangling?
 }
 
-void SimulatorModule::calculateDensity( int x, int y, int z, 
-									   bool *** cld, float *** den ) {
+void SimulatorModule::calculateDensity( bool *** cld, float *** den ) {
 
 	int S = 5; // Blur matrix is size SxSxS
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
 			for( int k = 0; k != z; ++k)
 				// Do a box blur
-				den[i][j][k] = singleDensity( x, y, z, i, j, k, cld, S);
+				den[i][j][k] = singleDensity( i, j, k, cld, S);
 
 }
 
-float SimulatorModule::singleDensity( int x, int y, int z, int i, int j, int k,
-									bool *** cld, int S ) {
+float SimulatorModule::singleDensity( int i, int j, int k, bool *** cld, 
+									 int S ) {
 
 	// Go through kernel
 	int halfS = (S-1)/2;
@@ -154,11 +155,12 @@ float SimulatorModule::singleDensity( int x, int y, int z, int i, int j, int k,
 
 float SimulatorModule::fieldFunction( float a ) {
 
-	return -4.0f/9.0f * pow(a,6) + 17.0f/9 * pow(a,4) - 22.0f/9 * pow(a,2) + 1;
+	return -4.0f/9.0f * pow(a,6) + 17.0f/9 * pow(a,4) - 
+		22.0f/9 * pow(a,2) + 1;
 
 }
 
-void SimulatorModule::copyGrid( float*** copyTo, float*** copyFrom, int x, int y, int z ) {
+void SimulatorModule::copyGrid( float*** copyTo, float*** copyFrom ) {
 		
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )

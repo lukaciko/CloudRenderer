@@ -75,7 +75,7 @@ namespace loop {
 			return;
 
 		// Initialize cloud simulation module
-		simulatorModule = new SimulatorModule();
+		simulatorModule = new SimulatorModule( gridX, gridY, gridZ );
 		simulatorModule->initialize();
 		
 		void* arguments [] = { &simulationData, &simulatorModule };

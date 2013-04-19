@@ -7,10 +7,10 @@
 class Camera {
 public:
 	Camera();
-	void initialize( int gridX, int gridY, int gridZ );
+	void initialize( const int gridX, const int gridY, const int gridZ );
 	void updateCamera();
-	glm::mat4 getLookAtMatrix();
-	glm::vec3 getViewDirection();
+	glm::mat4 getLookAtMatrix() const;
+	glm::vec3 getViewDirection() const;
 	inline glm::vec3 getEyeLocation() { return v4tov3(cameraPoint); };
 private:
 	glm::vec4 cameraPoint;
@@ -22,8 +22,8 @@ private:
 	int prevWheel;
 	bool prevMousePressed;
 
-	glm::vec3 v4tov3( glm::vec4 vector );
-	glm::vec4 v3tov4( glm::vec3 vector );
+	glm::vec3 v4tov3( const glm::vec4 vector ) const;
+	glm::vec4 v3tov4( const glm::vec3 vector ) const;
 
 	void rightButtonUpdates();
 	void scrollWheelUpdates();

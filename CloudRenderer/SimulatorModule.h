@@ -11,16 +11,20 @@
 
 class SimulatorModule {
 public:
-	SimulatorModule();
+	SimulatorModule( const int x, const int y, const int z );
 	void initialize();
 	void terminate();
 	// Part of the simulation step that can be done asynchronously
 	void stepAsych( SimulationData* data );
 	// Part of the simulation step that updates shared data and is protected with
 	// a mutex
-	void stepMutex( SimulationData* data, double startTime );
+	void stepMutex( SimulationData* data, const double startTime );
 private:
 	typedef std::vector<Cloud> CV;
+
+	const int x;
+	const int y;
+	const int z;
 
 	// List of clouds
 	CV clouds;
@@ -33,20 +37,19 @@ private:
 	int randomResolution;
 
 	// Simulate a cellular automata step
-	void simulateCellular( int x, int y, int z, bool *** hum, bool
+	void simulateCellular( bool *** hum, bool
 		*** act, bool *** cld, bool *** fAc );
 	// Creates a cloud at random position with random size
-	void createRandomCloud( int x, int y, int z );
+	void createRandomCloud();
 	// Calculate continous cloud density distribution for entire grid
-	void calculateDensity( int x, int y, int z, 
-		bool *** cld, float *** den );
+	void calculateDensity( bool *** cld, float *** den );
 	// Calculate continous cloud density distribution for one cell
-	float singleDensity( int x, int y, int z, int i, int j, int k,
+	float singleDensity( int i, int j, int k,
 		bool *** cld, int S );
 	// Calculate field function
 	float fieldFunction( float a );
 	// Override one array with another
-	void copyGrid( float*** copyTo, float*** copyFrom, int x, int y, int z );
+	void copyGrid( float*** copyTo, float*** copyFrom );
 
 };
 

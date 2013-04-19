@@ -8,7 +8,7 @@
 
 using namespace std;
 
-std::string loadShader( char* filename ) {
+std::string loadShader( const char * const filename ) {
 
 	std::string line, text;
 	std::ifstream in( filename );
@@ -19,7 +19,8 @@ std::string loadShader( char* filename ) {
 
 }
 
-GLuint ShaderManager::createFromFile( char* vertexFile, char* fragmentFile ) {
+GLuint ShaderManager::createFromFile( const char * const vertexFile,
+									 const char * const fragmentFile ) {
 
 	// Load shader source from file
 	std::string vstring = loadShader( vertexFile );

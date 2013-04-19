@@ -9,17 +9,21 @@
 class RendererModule {
 public:
 	RendererModule();
-	bool initialize( int gridX, int gridY, int gridZ );
+	bool initialize( const int gridX, const int gridY, const int gridZ );
 	void terminate();
-	void draw( SimulationData* data, GLFWmutex dataMutex, double frameTime );
+	void draw( const SimulationData* data, GLFWmutex dataMutex, 
+		       const double frameTime );
 	inline void changeShowSplat() { showSplat = !showSplat; };
 	inline void changeShowVRC() { showVRC = !showVRC; };
 private:
-	void interpolateCloudData( SimulationData* data, double frameTime );
-	void renderSplattingClouds( SimulationData* data, double frameTime ); //TODO: delete frametime
-	void renderRayCastingClouds( SimulationData* data, double frameTime );
-	void defineBillboardLayout( GLuint shaderProgram ); 
-	void defineRaycasterLayout( GLuint shaderProgram );
+	void interpolateCloudData( const SimulationData* data, 
+		const double frameTime );
+	void renderSplattingClouds( const SimulationData* data, 
+		const double frameTime ); //TODO: delete frametime
+	void renderRayCastingClouds( const SimulationData* data, 
+		const double frameTime );
+	void defineBillboardLayout( const GLuint shaderProgram ); 
+	void defineRaycasterLayout( const GLuint shaderProgram );
 
 	bool showSplat;
 	bool showVRC;

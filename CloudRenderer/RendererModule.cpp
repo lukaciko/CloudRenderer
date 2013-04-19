@@ -29,11 +29,12 @@ float fieldOfView = 85.0f;
 float tanFOV = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f );
 
 RendererModule::RendererModule() {
-	showSplat = true;
+	showSplat = false;
 	showVRC = true;
 };
 
-bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
+bool RendererModule::initialize( const int gridX, const int gridY, 
+								 const int gridZ ) {
 
 	// Initialize GLFW and opens a window
 	if( glfwInit() != GL_TRUE ) {
@@ -130,7 +131,7 @@ bool RendererModule::initialize( int gridX, int gridY, int gridZ ) {
 
 }
 
-void RendererModule::defineBillboardLayout( GLuint billboardShaderProgram ) {
+void RendererModule::defineBillboardLayout( const GLuint billboardShaderProgram ) {
 
 	// Define data layout
 	GLint posAttrib = glGetAttribLocation( billboardShaderProgram, 
@@ -147,7 +148,7 @@ void RendererModule::defineBillboardLayout( GLuint billboardShaderProgram ) {
 
 }
 
-void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
+void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram ) {
 
 	GLint posAttrib = glGetAttribLocation( raycasterShaderProgram, 
 		"cubeVert" );
@@ -157,7 +158,8 @@ void RendererModule::defineRaycasterLayout( GLuint raycasterShaderProgram ) {
 
 }
 
-void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time ) {
+void RendererModule::draw( const SimulationData* data, GLFWmutex simMutex, 
+						   const double time ) {
 	
 	// Update the camera
 	camera.updateCamera();
@@ -188,7 +190,8 @@ void RendererModule::draw( SimulationData* data, GLFWmutex simMutex, double time
 
 }
 
-void RendererModule::interpolateCloudData( SimulationData* data,  double time ) {
+void RendererModule::interpolateCloudData( const SimulationData* data,  
+										  const double time ) {
 
 	int x = data->getGridLength();
 	int y = data->getGridWidth();
@@ -213,8 +216,8 @@ void RendererModule::interpolateCloudData( SimulationData* data,  double time ) 
 }
 
 // Shade clouds by performing volume ray casting
-void RendererModule::renderRayCastingClouds( SimulationData* data, 
-											double time ) {
+void RendererModule::renderRayCastingClouds( const SimulationData* data, 
+											const double time ) {
 
 	glBindVertexArray( VAOs[1] );
 	glUseProgram( raycasterShaderProgram );
@@ -255,7 +258,8 @@ void RendererModule::renderRayCastingClouds( SimulationData* data,
 
 } 
 
-void RendererModule::renderSplattingClouds( SimulationData* data, double time ) { 
+void RendererModule::renderSplattingClouds( const SimulationData* data,
+										   const double time ) { 
 
 	glBindVertexArray( VAOs[0] );
 	glUseProgram( billboardShaderProgram );

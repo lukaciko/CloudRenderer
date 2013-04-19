@@ -6,7 +6,8 @@
 #include <random>
 #include <time.h>
 
-SimulationData::SimulationData( int gridLength, int gridWidth, int gridHeight )
+SimulationData::SimulationData( const int gridLength, const int gridWidth, 
+							   const int gridHeight )
 	: x(gridLength), y(gridWidth), z(gridHeight) { 
 
 	// Allocation of grids

@@ -9,7 +9,8 @@
 class SimulationData {
 	friend class SimulatorModule;
 public:
-	SimulationData( int gridLength, int gridWidth, int gridHeight ); 
+	SimulationData( const int gridLength, const int gridWidth, 
+		const int gridHeight ); 
 	~SimulationData();
 
 	float *** nextDen; // Continous density distribution (protected with mutex)
@@ -18,9 +19,9 @@ public:
 	double nextTime; // Time when nextDen was computed
 	double prevTime; // Time when prevDen was computed
 
-	inline int getGridLength() { return x; }
-	inline int getGridWidth() { return y; }
-	inline int getGridHeight() { return z; }
+	inline int getGridLength() const { return x; }
+	inline int getGridWidth() const { return y; }
+	inline int getGridHeight() const { return z; }
 private:
 
 	const int x; // The length of the grid

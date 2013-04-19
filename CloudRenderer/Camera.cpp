@@ -13,7 +13,7 @@ Camera::Camera():
 	prevWheel( 0 ),
 	prevMousePressed( false ) {}
 
-void Camera::initialize( int gridX, int gridY, int gridZ ) {
+void Camera::initialize( const int gridX, const int gridY, const int gridZ ) {
 
 	// Look vector located at the middle of the grid
 	cameraPoint.x += 0.5;
@@ -26,7 +26,7 @@ void Camera::initialize( int gridX, int gridY, int gridZ ) {
 
 }
 
-glm::mat4 Camera::getLookAtMatrix() {
+glm::mat4 Camera::getLookAtMatrix() const {
 
 	return glm::lookAt(
 		v4tov3( cameraPoint ),
@@ -36,7 +36,7 @@ glm::mat4 Camera::getLookAtMatrix() {
 
 }
 
-glm::vec3 Camera::getViewDirection() {
+glm::vec3 Camera::getViewDirection() const {
 	return v4tov3( glm::normalize( cameraPoint - lookAtPoint ) );
 }
 
@@ -146,10 +146,10 @@ void Camera::arrowUpdates() {
 	lookAtPoint.w = 1.0f;
 }
 
-glm::vec3 Camera::v4tov3(glm::vec4 v1)  {
+glm::vec3 Camera::v4tov3( const glm::vec4 v1 ) const {
     return glm::vec3(v1.x, v1.y, v1.z);
 }
 
-glm::vec4 Camera::v3tov4(glm::vec3 v1)  {
+glm::vec4 Camera::v3tov4( const glm::vec3 v1 ) const {
     return glm::vec4(v1.x, v1.y, v1.z, 1.0f);
 }

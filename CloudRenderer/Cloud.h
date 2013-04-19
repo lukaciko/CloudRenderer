@@ -6,7 +6,7 @@
 #include <glm\glm.hpp>
 class Cloud {
 public:
-	Cloud( glm::vec3 position, float size );
+	Cloud( const glm::vec3 position, const float size );
 	inline glm::vec3 getPosition() { return position; };
 	inline float getSize() { return size; };
 private:

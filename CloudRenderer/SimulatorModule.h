@@ -5,6 +5,9 @@
 #define SIMULATORMODULE_H
 
 #include "SimulationData.h"
+#include "Cloud.h"
+
+#include <vector>
 
 class SimulatorModule {
 public:
@@ -17,6 +20,10 @@ public:
 	// a mutex
 	void stepMutex( SimulationData* data, double startTime );
 private:
+	typedef std::vector<Cloud> CV;
+
+	// List of clouds
+	CV clouds;
 	// Vapor extinction probability
 	float pHumExt;
 	// Phase transition extinction probability
@@ -28,6 +35,8 @@ private:
 	// Simulate a cellular automata step
 	void simulateCellular( int x, int y, int z, bool *** hum, bool
 		*** act, bool *** cld, bool *** fAc );
+	// Creates a cloud at random position with random size
+	void createRandomCloud( int x, int y, int z );
 	// Calculate continous cloud density distribution for entire grid
 	void calculateDensity( int x, int y, int z, 
 		bool *** cld, float *** den );

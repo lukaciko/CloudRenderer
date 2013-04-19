@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "SimulatorModule.h"
+#include "Cloud.h"
 
 #include <iostream>
 #include <random>
@@ -53,6 +54,9 @@ void SimulatorModule::stepMutex( SimulationData* data, double time ) {
 void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
 									  *** act, bool *** cld, bool *** fAc ) {
 	
+	if( rand() % 5 == 0 )
+		createRandomCloud( x, y, z );
+
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
 			for(int k = 0; k != z; ++k )
@@ -68,21 +72,27 @@ void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
 					fAc[i][j][k];
 				hum[i][j][k] = hum[i][j][k] && !act[i][j][k];
 				act[i][j][k] = newAct;
-
+				
 				// Scale probabilities with the distance from nearest elipsoid
-				float dist1 = distFrom(i, j, k, x/2, (y-5)/2, z/2);
-				float dist2 = distFrom(i, j, k, (x+26)/2, (y+34)/2, (z-19)/2);
-				float distance = dist1 < dist2 ? dist1 : dist2;
+				
+				// Find the closest/largest cloud
+				float minDistSize = 9999;
+				for( CV::iterator it = clouds.begin(); it != clouds.end(); ++it ) {
+					glm::vec3 pos = it->getPosition();
+					float dist = distFrom( i, j, k, pos.x, pos.y, pos.z );
+					if( dist / it->getSize() < minDistSize ) 
+						// We actually need just the size/dist ratio
+						minDistSize = dist / it->getSize();
+				}
 
-				float cloudSize = dist1 < dist2 ? 28 : 28;
-
+				
 				// Extinction probability increases with distance, other two
 				// decrease
-				float scaledPCldExt = pCldExt * ( 1 + distance / cloudSize);
+				float scaledPCldExt = pCldExt * ( minDistSize );
 				if( scaledPCldExt > 1 ) scaledPCldExt = 1;
-				float scaledPHumExt = pHumExt * ( 1 - distance / cloudSize);
+				float scaledPHumExt = pHumExt * ( 1 - minDistSize );
 				if( scaledPHumExt < 0 ) scaledPHumExt = 0;
-				float scaledPActExt = pActExt * ( 1 - distance / cloudSize);
+				float scaledPActExt = pActExt * ( 1 - minDistSize );
 				if( scaledPActExt < 0 ) scaledPActExt = 0;
 
 				// Cloud extinction
@@ -101,6 +111,17 @@ void SimulatorModule::simulateCellular( int x, int y, int z, bool *** hum, bool
 
 }
 
+void SimulatorModule::createRandomCloud( int x, int y, int z ) {
+	
+	if( clouds.size() > 10 )
+		return;
+
+	glm::vec3 position = glm::vec3( rand() % (x - 30 ) + 15, rand() % (y - 30 ) + 15, rand() % (z - 30 ) + 15 ); 
+	int size = rand() % 26 + 10;
+	Cloud cloud = Cloud( position, size );
+	clouds.push_back( cloud ); // TODO: dangling?
+}
+
 void SimulatorModule::calculateDensity( int x, int y, int z, 
 									   bool *** cld, float *** den ) {
 
@@ -115,6 +136,7 @@ void SimulatorModule::calculateDensity( int x, int y, int z,
 
 float SimulatorModule::singleDensity( int x, int y, int z, int i, int j, int k,
 									bool *** cld, int S ) {
+
 	// Go through kernel
 	int halfS = (S-1)/2;
 	float sum = 0;

@@ -63,7 +63,7 @@ void main() {
 			// Calculate light attenuation
 			for( int j = 0; j < lightSamples; ++j ) {
 
-				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.025;
+				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.015;
 				// TODO: optimize - check for break
 				lightPos += lightRay.direction * lightStepSize;
 
@@ -73,7 +73,7 @@ void main() {
 
 			// add color depending on cell density and attenuation
 			if( cellDensity > 0.001 )
-				color = mix( color, vec3( attenuation ), cellDensity * 2 ); // *2 - not nice
+				color = mix( color, vec3( attenuation, attenuation, mix ( attenuation, 1.0, 0.2 ) ), cellDensity * 2 ); // *2 - not nice
 				//TODO: ones in front count more
 
 

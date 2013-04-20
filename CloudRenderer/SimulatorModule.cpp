@@ -26,16 +26,10 @@ SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
 
 }
 
-void SimulatorModule::initialize() {
-}
-
-void SimulatorModule::terminate() {
-}
-
 void SimulatorModule::stepAsych( SimulationData* data ) {
 	
 	simulateCellular( data->hum, 
-		data->act, data->cld, data->fAc );
+		data->act, data->cld, data->fAc, data->distSize );
 	
 	calculateDensity( data->cld, data->workDen );
 
@@ -53,10 +47,10 @@ void SimulatorModule::stepMutex( SimulationData* data, const double time ) {
 }
 
 void SimulatorModule::simulateCellular( bool *** hum, bool *** act, 
-									    bool *** cld, bool *** fAc ) {
+									    bool *** cld, bool *** fAc, float *** distSize ) {
 	
-	if( rand() % 5 == 0 )
-		createRandomCloud();
+	if( clouds.size() < 2 || rand() % 5 == 0 )
+		createRandomCloud( distSize );
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -75,17 +69,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 				act[i][j][k] = newAct;
 				
 				// Scale probabilities with the distance from nearest elipsoid
-				
-				// Find the closest/largest cloud
-				float minDistSize = 9999;
-				for( CV::iterator it = clouds.begin(); it != clouds.end(); ++it ) {
-					glm::vec3 pos = it->getPosition();
-					float dist = distFrom( i, j, k, pos.x, pos.y, pos.z );
-					if( dist / it->getSize() < minDistSize ) 
-						// We actually need just the size/dist ratio
-						minDistSize = dist / it->getSize();
-				}
-
+				float minDistSize = distSize[i][j][k];
 				
 				// Extinction probability increases with distance, other two
 				// decrease
@@ -112,7 +96,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 
 }
 
-void SimulatorModule::createRandomCloud() {
+void SimulatorModule::createRandomCloud( float *** distSize ) {
 	
 	if( clouds.size() > 10 )
 		return;
@@ -121,7 +105,24 @@ void SimulatorModule::createRandomCloud() {
 		rand() % (y - 30 ) + 15, rand() % (z - 30 ) + 15 ); 
 	int size = rand() % 26 + 10;
 	Cloud cloud = Cloud( position, size );
-	clouds.push_back( cloud ); // TODO: dangling?
+	clouds.push_back( cloud );
+
+	// When cloud is created, calculate dist/size ratio
+
+	for( int i = 0; i != x; ++i )
+		for( int j = 0; j != y; ++j )
+			for(int k = 0; k != z; ++k) {
+				// Find the closest/largest cloud
+				float minDistSize = 9999;
+				for( CV::iterator it = clouds.begin(); it != clouds.end(); ++it ) {
+					glm::vec3 pos = it->getPosition();
+					float dist = distFrom( i, j, k, pos.x, pos.y, pos.z );
+					if( dist / it->getSize() < minDistSize ) 
+						// We actually need just the size/dist ratio
+						minDistSize = dist / it->getSize();
+				}
+				distSize[i][j][k] = minDistSize;
+			}
 }
 
 void SimulatorModule::calculateDensity( bool *** cld, float *** den ) {

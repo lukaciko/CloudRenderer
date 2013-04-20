@@ -158,7 +158,7 @@ void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram 
 
 }
 
-void RendererModule::draw( const SimulationData* data, GLFWmutex simMutex, 
+void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex, 
 						   const double time ) {
 	
 	// Update the camera
@@ -190,25 +190,25 @@ void RendererModule::draw( const SimulationData* data, GLFWmutex simMutex,
 
 }
 
-void RendererModule::interpolateCloudData( const SimulationData* data,  
+void RendererModule::interpolateCloudData( const SimulationData & data,  
 										  const double time ) {
 
-	int x = data->getGridLength();
-	int y = data->getGridWidth();
-	int z = data->getGridHeight();
+	int x = data.getGridLength();
+	int y = data.getGridWidth();
+	int z = data.getGridHeight();
 
 	// Calculate relative difference for linear interpolation
-	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
+	float relDiff = (time - data.nextTime)/(data.nextTime - data.prevTime);
 	if( relDiff > 1.0f )relDiff = 1.0f;
 
 	for( int i = 0; i < x; ++i ) 
 		for( int j = 0; j < y; ++j ) 
 			for( int k = 0; k < z; ++k )
-				if( data->nextDen[i][j][k] > 0.0f ) {
+				if( data.nextDen[i][j][k] > 0.0f ) {
 
 					// Lineary interpolate the density
-					interpolatedData[i][j][k] = data->prevDen[i][j][k] + relDiff
-						* (data->nextDen[i][j][k] - data->prevDen[i][j][k] );
+					interpolatedData[i][j][k] = data.prevDen[i][j][k] + relDiff
+						* (data.nextDen[i][j][k] - data.prevDen[i][j][k] );
 
 				}
 				else
@@ -216,7 +216,7 @@ void RendererModule::interpolateCloudData( const SimulationData* data,
 }
 
 // Shade clouds by performing volume ray casting
-void RendererModule::renderRayCastingClouds( const SimulationData* data, 
+void RendererModule::renderRayCastingClouds( const SimulationData & data, 
 											const double time ) {
 
 	glBindVertexArray( VAOs[1] );
@@ -233,9 +233,9 @@ void RendererModule::renderRayCastingClouds( const SimulationData* data,
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
 
-	int x = data->getGridLength();
-	int y = data->getGridWidth();
-	int z = data->getGridHeight();
+	int x = data.getGridLength();
+	int y = data.getGridWidth();
+	int z = data.getGridHeight();
 
 	// Convert float*** to float* (stream of data)
 	float* texData = new float[x*y*z];
@@ -258,7 +258,7 @@ void RendererModule::renderRayCastingClouds( const SimulationData* data,
 
 } 
 
-void RendererModule::renderSplattingClouds( const SimulationData* data,
+void RendererModule::renderSplattingClouds( const SimulationData & data,
 										   const double time ) { 
 
 	glBindVertexArray( VAOs[0] );
@@ -275,12 +275,12 @@ void RendererModule::renderSplattingClouds( const SimulationData* data,
 	GLint uniPosition = glGetUniformLocation( billboardShaderProgram, "position" );
 	GLint uniAlpha = glGetUniformLocation( billboardShaderProgram, "alpha" );
 
-	int x = data->getGridLength();
-	int y = data->getGridWidth();
-	int z = data->getGridHeight();
+	int x = data.getGridLength();
+	int y = data.getGridWidth();
+	int z = data.getGridHeight();
 
 	// Calculate relative difference for linear interpolation
-	float relDiff = (time - data->nextTime)/(data->nextTime - data->prevTime);
+	float relDiff = (time - data.nextTime)/(data.nextTime - data.prevTime);
 	if( relDiff > 1.0f )relDiff = 1.0f;
 
 	for( int i = 0; i < x; ++i ) 

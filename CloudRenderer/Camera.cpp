@@ -146,10 +146,10 @@ void Camera::arrowUpdates() {
 	lookAtPoint.w = 1.0f;
 }
 
-glm::vec3 Camera::v4tov3( const glm::vec4 v1 ) const {
+glm::vec3 Camera::v4tov3( const glm::vec4& v1 ) const {
     return glm::vec3(v1.x, v1.y, v1.z);
 }
 
-glm::vec4 Camera::v3tov4( const glm::vec3 v1 ) const {
+glm::vec4 Camera::v3tov4( const glm::vec3& v1 ) const {
     return glm::vec4(v1.x, v1.y, v1.z, 1.0f);
 }

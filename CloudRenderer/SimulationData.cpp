@@ -15,6 +15,7 @@ SimulationData::SimulationData( const int gridLength, const int gridWidth,
 	cld = new bool ** [gridLength];
 	act = new bool ** [gridLength];
 	fAc = new bool ** [gridLength];
+	distSize = new float ** [gridLength];
 	workDen = new float ** [gridLength];
 	prevDen = new float ** [gridLength];
 	nextDen = new float ** [gridLength];
@@ -23,6 +24,7 @@ SimulationData::SimulationData( const int gridLength, const int gridWidth,
 	make3Darray( cld );
 	make3Darray( act );
 	make3Darray( fAc );
+	make3Darray( distSize );
 	make3Darray( workDen );
 	make3Darray( prevDen );
 	make3Darray( nextDen );
@@ -50,6 +52,7 @@ SimulationData::~SimulationData() {
 	delete3Darray( cld );
 	delete3Darray( act );
 	delete3Darray( fAc );
+	delete3Darray( distSize );
 	delete3Darray( workDen );
 	delete3Darray( prevDen );
 	delete3Darray( nextDen );
@@ -57,6 +60,7 @@ SimulationData::~SimulationData() {
 	delete cld;
 	delete act;
 	delete fAc;
+	delete distSize;
 	delete workDen;
 	delete prevDen;
 	delete nextDen;

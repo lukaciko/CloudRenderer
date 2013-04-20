@@ -3,6 +3,7 @@
 #include "mainLoop.h"
 
 #include <iostream>
+#include <memory>
 
 #include "SimulationData.h"
 #include "RendererModule.h"
@@ -18,9 +19,9 @@ namespace loop {
 	int frameCap = 60;
 	double simulationCap = 2;
 	
-	SimulationData* simulationData;
-	SimulatorModule* simulatorModule;
-	RendererModule* rendererModule;
+	std::unique_ptr<SimulationData> simulationData;
+	std::unique_ptr<SimulatorModule> simulatorModule;
+	std::unique_ptr<RendererModule> rendererModule;
 
 	// Simulation thread
 	GLFWthread simThread;
@@ -42,11 +43,11 @@ namespace loop {
 
 				// Perform the part of the simulation that can be done 
 				// asynchronously
-				simulatorModule->stepAsych( simulationData );
-
+				simulatorModule->stepAsych( simulationData.get() );
+				
 				// Lock mutex and do the rest of the simulation
 				glfwLockMutex( simMutex );
-				simulatorModule->stepMutex( simulationData, glfwGetTime() );
+				simulatorModule->stepMutex( simulationData.get(), glfwGetTime() );
 				glfwUnlockMutex( simMutex );
 
 				glfwSleep( 1.0/simulationCap - glfwGetTime() + startTime );
@@ -67,16 +68,18 @@ namespace loop {
 	void run() {
 
 		// Allocate simulation data on the heap
-		simulationData = new SimulationData( gridX, gridY, gridZ );
+		simulationData = std::unique_ptr<SimulationData>(
+			new SimulationData( gridX, gridY, gridZ ));
 
 		// Initialize cloud renderer module
-		rendererModule = new RendererModule();
+		rendererModule = std::unique_ptr<RendererModule>(
+			new RendererModule());
 		if( !rendererModule->initialize( gridX, gridY, gridZ ) )
 			return;
 
 		// Initialize cloud simulation module
-		simulatorModule = new SimulatorModule( gridX, gridY, gridZ );
-		simulatorModule->initialize();
+		simulatorModule = std::unique_ptr<SimulatorModule>(
+			new SimulatorModule( gridX, gridY, gridZ ));
 		
 		void* arguments [] = { &simulationData, &simulatorModule };
 
@@ -91,7 +94,7 @@ namespace loop {
 
 			double startTime = glfwGetTime();
 
-			rendererModule->draw( simulationData, simMutex, startTime );
+			rendererModule->draw( *simulationData.get(), simMutex, startTime );
 		    
 			glfwSleep( 1.0/frameCap - glfwGetTime() + startTime );
 		
@@ -102,15 +105,8 @@ namespace loop {
 		// Wait for the other thread to finish
 		glfwWaitThread( simThread, GLFW_WAIT );
 
-		// Terminate everything in opposite order of initialization
-
-		simulatorModule->terminate();
-		delete simulatorModule;
-
+		// Terminate
 		rendererModule->terminate();
-		delete rendererModule;
-
-		delete simulationData;
 
 	}
 }

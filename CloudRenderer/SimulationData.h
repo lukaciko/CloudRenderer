@@ -33,6 +33,7 @@ private:
 	bool *** act; // Phase transition/activation
 	bool *** fAc;
 
+	float *** distSize; // Private size/distance to nearest cloud ratio
 	float *** workDen; // Private continous density distribution
 
 	// Creates a dynamic 3d boolean array of size x*y*z

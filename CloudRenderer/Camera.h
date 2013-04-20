@@ -22,8 +22,8 @@ private:
 	int prevWheel;
 	bool prevMousePressed;
 
-	glm::vec3 v4tov3( const glm::vec4 vector ) const;
-	glm::vec4 v3tov4( const glm::vec3 vector ) const;
+	glm::vec3 v4tov3( const glm::vec4& vector ) const;
+	glm::vec4 v3tov4( const glm::vec3& vector ) const;
 
 	void rightButtonUpdates();
 	void scrollWheelUpdates();

@@ -12,8 +12,6 @@
 class SimulatorModule {
 public:
 	SimulatorModule( const int x, const int y, const int z );
-	void initialize();
-	void terminate();
 	// Part of the simulation step that can be done asynchronously
 	void stepAsych( SimulationData* data );
 	// Part of the simulation step that updates shared data and is protected with
@@ -38,9 +36,10 @@ private:
 
 	// Simulate a cellular automata step
 	void simulateCellular( bool *** hum, bool
-		*** act, bool *** cld, bool *** fAc );
-	// Creates a cloud at random position with random size
-	void createRandomCloud();
+		*** act, bool *** cld, bool *** fAc, float *** distSize );
+	// Creates a cloud at random position with random size, recalculates 
+	// dist/size ratios
+	void createRandomCloud( float *** distSize );
 	// Calculate continous cloud density distribution for entire grid
 	void calculateDensity( bool *** cld, float *** den );
 	// Calculate continous cloud density distribution for one cell

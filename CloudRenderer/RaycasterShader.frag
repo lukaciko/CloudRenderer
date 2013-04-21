@@ -43,7 +43,6 @@ void main() {
 	
 	Ray viewRay = Ray( eyePosition, normalize( viewDirection ) );	
 
-	float colorAlpha = 0;
 	vec3 color = vec3( 155/256.0, 225/256.0, 251/256.0 );
 	vec3 pos = viewRay.origin;
 	pos += viewDirection * viewStepSize * viewSamples;
@@ -52,7 +51,7 @@ void main() {
 	for( int i = 0; i < viewSamples; ++i ) {
 		
 		float cellDensity = texture( density, pos );
-		//if( cellDensity > 0.05 ) {
+		if( cellDensity > 0.05 ) {
 			
 			cellDensity *= densityFactor;
 		
@@ -63,19 +62,17 @@ void main() {
 			// Calculate light attenuation
 			for( int j = 0; j < lightSamples; ++j ) {
 
-				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.015;
+				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.025;
 				// TODO: optimize - check for break
 				lightPos += lightRay.direction * lightStepSize;
 
 			}
 
-			colorAlpha += cellDensity;
-
 			// add color depending on cell density and attenuation
 			if( cellDensity > 0.001 )
-				color = mix( color, vec3( attenuation, attenuation, mix ( attenuation, 1.0, 0.2 ) ), cellDensity * 2 ); // *2 - not nice
+				color = mix( color, vec3( attenuation, attenuation, mix ( attenuation, 1.0, 0.2 ) ), cellDensity * 5); // *2 - not nice
 				//TODO: ones in front count more
-
+		}
 
 		pos -= viewRay.direction * viewStepSize;
 

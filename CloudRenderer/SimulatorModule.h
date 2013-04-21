@@ -37,9 +37,10 @@ private:
 	// Simulate a cellular automata step
 	void simulateCellular( bool *** hum, bool
 		*** act, bool *** cld, bool *** fAc, float *** distSize );
-	// Creates a cloud at random position with random size, recalculates 
-	// dist/size ratios
-	void createRandomCloud( float *** distSize );
+	// Creates a cloud at random position with random size
+	void createRandomCloud();
+	// Recalculates dist/size, should be called when clouds are created
+	void calculateDistSite( float *** distSize );
 	// Calculate continous cloud density distribution for entire grid
 	void calculateDensity( bool *** cld, float *** den );
 	// Calculate continous cloud density distribution for one cell

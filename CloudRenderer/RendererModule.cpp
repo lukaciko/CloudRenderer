@@ -11,8 +11,8 @@
 #include "RenderUtility.h"
 #include "Cube.h"
 
-GLuint windowWidth = 800;
-GLuint windowHeight = 600;
+GLuint windowWidth = 1200;
+GLuint windowHeight = 900;
 const char * windowTitle = "Real-timeish Cloud Renderer";
 
 ShaderManager shaderManager;

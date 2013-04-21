@@ -49,8 +49,13 @@ void SimulatorModule::stepMutex( SimulationData* data, const double time ) {
 void SimulatorModule::simulateCellular( bool *** hum, bool *** act, 
 									    bool *** cld, bool *** fAc, float *** distSize ) {
 	
-	if( clouds.size() < 2 || rand() % 5 == 0 )
-		createRandomCloud( distSize );
+	std::cout << "Simulation step\n";
+	bool loopEntered = false;
+	while( clouds.size() < 7 || rand() % 10 == 0 ) {
+		createRandomCloud();
+		loopEntered = true;
+	}
+	if( loopEntered ) calculateDistSite( distSize );
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -96,8 +101,9 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 
 }
 
-void SimulatorModule::createRandomCloud( float *** distSize ) {
+void SimulatorModule::createRandomCloud() {
 	
+	std::cout << "Creating a cloud\n";
 	if( clouds.size() > 10 )
 		clouds.pop_front();
 
@@ -109,7 +115,9 @@ void SimulatorModule::createRandomCloud( float *** distSize ) {
 	Cloud cloud = Cloud( position, size );
 	clouds.push_back( cloud );
 
-	// When cloud is created, calculate dist/size ratio
+}
+
+void SimulatorModule::calculateDistSite( float *** distSize ) {
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )

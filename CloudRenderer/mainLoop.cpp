@@ -60,8 +60,6 @@ namespace loop {
 		if( key=='P' && state == GLFW_PRESS )
 			simPaused = !simPaused;
 		if ( key == '1' && state == GLFW_PRESS)
-			rendererModule->changeShowSplat();
-		if ( key == '2' && state == GLFW_PRESS)
 			rendererModule->changeShowVRC();
 	}
 

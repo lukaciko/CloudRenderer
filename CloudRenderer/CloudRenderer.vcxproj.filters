@@ -88,22 +88,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BillboardShader.vert">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="BillboardShader.frag">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="RaycasterShader.vert">
       <Filter>Source Files</Filter>
     </None>
     <None Include="RaycasterShader.frag">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="particle_texture.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

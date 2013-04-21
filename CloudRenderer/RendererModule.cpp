@@ -230,7 +230,7 @@ void RendererModule::renderRayCastingClouds( const SimulationData & data,
 	setUniform( "near", nearPlane );
 	setUniform( "far", farPlane );
 
-	glEnable( GL_CULL_FACE );
+	glDisable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
 
 	int x = data.getGridLength();

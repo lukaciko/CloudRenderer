@@ -7,7 +7,7 @@
 #include "SimulationData.h"
 #include "Cloud.h"
 
-#include <vector>
+#include <deque>
 
 class SimulatorModule {
 public:
@@ -18,7 +18,7 @@ public:
 	// a mutex
 	void stepMutex( SimulationData* data, const double startTime );
 private:
-	typedef std::vector<Cloud> CV;
+	typedef std::deque<Cloud> CV;
 
 	const int x;
 	const int y;

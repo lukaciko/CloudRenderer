@@ -73,11 +73,11 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 				
 				// Extinction probability increases with distance, other two
 				// decrease
-				float scaledPCldExt = pCldExt * ( minDistSize );
+				float scaledPCldExt = pCldExt * (1 - minDistSize);
 				if( scaledPCldExt > 1 ) scaledPCldExt = 1;
-				float scaledPHumExt = pHumExt * ( 1 - minDistSize );
+				float scaledPHumExt = pHumExt * minDistSize;
 				if( scaledPHumExt < 0 ) scaledPHumExt = 0;
-				float scaledPActExt = pActExt * ( 1 - minDistSize );
+				float scaledPActExt = pActExt * minDistSize;
 				if( scaledPActExt < 0 ) scaledPActExt = 0;
 
 				// Cloud extinction
@@ -99,11 +99,13 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 void SimulatorModule::createRandomCloud( float *** distSize ) {
 	
 	if( clouds.size() > 10 )
-		return;
+		clouds.pop_front();
 
-	glm::vec3 position = glm::vec3( rand() % (x - 30 ) + 15, 
-		rand() % (y - 30 ) + 15, rand() % (z - 30 ) + 15 ); 
-	int size = rand() % 26 + 10;
+	int distFromBorder = 25;
+	glm::vec3 position = glm::vec3( rand() % (x - 2*distFromBorder ) + 
+		distFromBorder,	rand() % (y - 2*distFromBorder ) + distFromBorder,
+		rand() % (z - 2*distFromBorder ) + distFromBorder ); 
+	int size = rand() % 24 + 12;
 	Cloud cloud = Cloud( position, size );
 	clouds.push_back( cloud );
 
@@ -121,6 +123,8 @@ void SimulatorModule::createRandomCloud( float *** distSize ) {
 						// We actually need just the size/dist ratio
 						minDistSize = dist / it->getSize();
 				}
+				minDistSize = pow( 25, -minDistSize );
+				if( minDistSize < 0.01 ) minDistSize = 0;
 				distSize[i][j][k] = minDistSize;
 			}
 }

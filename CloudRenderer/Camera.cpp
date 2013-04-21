@@ -18,7 +18,7 @@ void Camera::initialize( const int gridX, const int gridY, const int gridZ ) {
 	// Look vector located at the middle of the grid
 	cameraPoint.x += 0.5;
 	cameraPoint.y += 0.5;
-	cameraPoint.z += -1.5;
+	cameraPoint.z += -0.5;
 
 	lookAtPoint.x += 0.5;
 	lookAtPoint.y += 0.5;

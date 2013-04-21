@@ -83,5 +83,5 @@ void main() {
 
 	outColor = vec4( color, 255 );
 	vec4 debug = vec4( viewRay.direction, 1.0 );
-	outColor = mix(outColor, debug, 0);
+	outColor = mix( outColor, debug, 0.0 );
 }

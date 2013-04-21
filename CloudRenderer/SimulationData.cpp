@@ -33,6 +33,7 @@ SimulationData::SimulationData( const int gridLength, const int gridWidth,
 	prevTime = 0; // TODO: set to glfw time
 	nextTime = 0;
 
+	/*
 	// hum and act set randomly, cld 0
 	for( int i = 0; i != gridLength; ++i )
 		for( int j = 0; j != gridWidth; ++j )
@@ -42,6 +43,7 @@ SimulationData::SimulationData( const int gridLength, const int gridWidth,
 				if( rand() % 1500 == 0 )
 					act[i][j][k] = true;
 			}
+	*/
 
 }
 

@@ -7,6 +7,7 @@
 #include "SimulationData.h"
 #include "Cloud.h"
 
+#include <random>
 #include <deque>
 
 class SimulatorModule {
@@ -32,6 +33,8 @@ private:
 	float pActExt;
 	// Cloud extinction probability
 	float pCldExt;
+
+	std::mt19937 gen;
 	int randomResolution;
 
 	// Simulate a cellular automata step

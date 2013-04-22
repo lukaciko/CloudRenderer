@@ -51,13 +51,13 @@ void Camera::updateCamera() {
 // Rotations with right mouse button
 void Camera::rightButtonUpdates() {
 	float rotationFactor = 0.2f;
-	if( glfwGetMouseButton(1) ) {
+	if( !glfwGetMouseButton(1) ) {
 		if( prevMousePressed ) {
 			// Right mouse button has been pressed for more than 1 frame
 			int newMouseX, newMouseY;
 			glfwGetMousePos( &newMouseX, &newMouseY );				
 			
-			int diffX = newMouseX - prevMouseX;
+			int diffX = newMouseX - prevMouseX + 1;
 			int diffY = newMouseY - prevMouseY;
 			
 			glm::vec3 transVec = v4tov3( lookAtPoint );

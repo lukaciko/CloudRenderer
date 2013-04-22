@@ -20,8 +20,9 @@ const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
+const float densityCutoff = 0.03;
 const float densityFactor = 0.35;
-const float attenuationFactor = 3;
+const float attenuationFactor = 0.12;
 
 out vec4 outColor;
 
@@ -51,7 +52,7 @@ void main() {
 	for( int i = 0; i < viewSamples; ++i ) {
 		
 		float cellDensity = texture( density, pos );
-		if( cellDensity > 0.05 ) {
+		if( cellDensity > densityCutoff ) {
 			
 			cellDensity *= densityFactor;
 		
@@ -62,7 +63,10 @@ void main() {
 			// Calculate light attenuation
 			for( int j = 0; j < lightSamples; ++j ) {
 
-				attenuation *= 1 - texture( density, lightPos ) * attenuationFactor * 0.025;
+				attenuation *= 1 - 
+					texture( density, lightPos )	
+					* attenuationFactor				 
+					* ( 1 - j / lightSamples );		// Closer texture reads contribute more
 				// TODO: optimize - check for break
 				lightPos += lightRay.direction * lightStepSize;
 

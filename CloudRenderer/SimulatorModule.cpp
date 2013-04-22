@@ -3,6 +3,7 @@
 #include "SimulatorModule.h"
 #include "Cloud.h"
 
+#include <algorithm>
 #include <iostream>
 #include <random>
 #include <time.h>
@@ -22,7 +23,9 @@ SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
 	pActExt( 0.001f ),
 	pCldExt( 0.1f ),
 	randomResolution( 10000 ) {
-	srand( time(NULL) );
+	
+	std::random_device rd;
+	gen = std::mt19937( rd() );
 
 }
 
@@ -51,7 +54,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 	
 	std::cout << "Simulation step\n";
 	bool loopEntered = false;
-	while( clouds.size() < 7 || rand() % 10 == 0 ) {
+	while( clouds.size() < 7 || gen() % 15 == 0 ) {
 		createRandomCloud();
 		loopEntered = true;
 	}
@@ -87,13 +90,13 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 
 				// Cloud extinction
 				if( cld[i][j][k] )
-					if( (float)(rand() % randomResolution)/randomResolution < 
+					if( (float)(gen() % randomResolution)/randomResolution < 
 						scaledPCldExt )
 						cld[i][j][k] = false;
-				if( (float)(rand() % randomResolution)/randomResolution < 
+				if( (float)(gen() % randomResolution)/randomResolution < 
 					scaledPHumExt )
 					hum[i][j][k] = true;
-				if( (float)(rand() % randomResolution)/randomResolution < 
+				if( (float)(gen() % randomResolution)/randomResolution < 
 					scaledPActExt )
 					act[i][j][k] = true;
 								
@@ -102,16 +105,16 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 }
 
 void SimulatorModule::createRandomCloud() {
-	
+
 	std::cout << "Creating a cloud\n";
 	if( clouds.size() > 10 )
 		clouds.pop_front();
 
 	int distFromBorder = 25;
-	glm::vec3 position = glm::vec3( rand() % (x - 2*distFromBorder ) + 
-		distFromBorder,	rand() % (y - 2*distFromBorder ) + distFromBorder,
-		rand() % (z - 2*distFromBorder ) + distFromBorder ); 
-	int size = rand() % 24 + 12;
+	glm::vec3 position = glm::vec3( gen() % (x - 2*distFromBorder ) + 
+		distFromBorder,	gen() % (y - 2*distFromBorder ) + distFromBorder,
+		gen() % (z - 2*distFromBorder ) + distFromBorder ); 
+	int size = gen() % 22 + 8;
 	Cloud cloud = Cloud( position, size );
 	clouds.push_back( cloud );
 

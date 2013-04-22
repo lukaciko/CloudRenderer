@@ -3,7 +3,6 @@
 #include "SimulationData.h"
 
 #include <math.h>
-#include <random>
 #include <time.h>
 
 SimulationData::SimulationData( const int gridLength, const int gridWidth, 
@@ -29,7 +28,6 @@ SimulationData::SimulationData( const int gridLength, const int gridWidth,
 	make3Darray( prevDen );
 	make3Darray( nextDen );
 
-	srand( time(NULL) );
 	prevTime = 0; // TODO: set to glfw time
 	nextTime = 0;
 

@@ -25,6 +25,11 @@ private:
 	const int y;
 	const int z;
 
+	// Smaller base gives bigger clouds that more closely resemble elepsoids
+	const int exponentialBase;
+	const int minCloudSize;
+	const int maxCloudSize;
+	
 	// List of clouds
 	CV clouds;
 	// Vapor extinction probability

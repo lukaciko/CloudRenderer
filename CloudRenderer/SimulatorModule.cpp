@@ -20,9 +20,12 @@ SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
 	y( y ),
 	z( z ),
 	pHumExt( 0.1f ),
-	pActExt( 0.001f ),
+	pActExt( 0.05f ),
 	pCldExt( 0.1f ),
-	randomResolution( 10000 ) {
+	randomResolution( 10000 ),
+	exponentialBase( 8 ),
+	minCloudSize( 8 ),
+	maxCloudSize( 18 ) {
 	
 	std::random_device rd;
 	gen = std::mt19937( rd() );
@@ -54,7 +57,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 	
 	std::cout << "Simulation step\n";
 	bool loopEntered = false;
-	while( clouds.size() < 7 || gen() % 15 == 0 ) {
+	while( clouds.size() < 10 ){ // || gen() % 15 == 0 ) {
 		createRandomCloud();
 		loopEntered = true;
 	}
@@ -114,7 +117,7 @@ void SimulatorModule::createRandomCloud() {
 	glm::vec3 position = glm::vec3( gen() % (x - 2*distFromBorder ) + 
 		distFromBorder,	gen() % (y - 2*distFromBorder ) + distFromBorder,
 		gen() % (z - 2*distFromBorder ) + distFromBorder ); 
-	int size = gen() % 22 + 8;
+	int size = gen() % ( maxCloudSize - minCloudSize ) + minCloudSize;
 	Cloud cloud = Cloud( position, size );
 	clouds.push_back( cloud );
 
@@ -134,7 +137,7 @@ void SimulatorModule::calculateDistSite( float *** distSize ) {
 						// We actually need just the size/dist ratio
 						minDistSize = dist / it->getSize();
 				}
-				minDistSize = pow( 25, -minDistSize );
+				minDistSize = pow( exponentialBase, -minDistSize );
 				if( minDistSize < 0.01 ) minDistSize = 0;
 				distSize[i][j][k] = minDistSize;
 			}

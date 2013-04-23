@@ -20,7 +20,7 @@ const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
-const float densityCutoff = 0.03;
+const float densityCutoff = 0.07;
 const float densityFactor = 0.35;
 const float attenuationFactor = 0.12;
 

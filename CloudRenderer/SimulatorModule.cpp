@@ -23,9 +23,9 @@ SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
 	pActExt( 0.05f ),
 	pCldExt( 0.1f ),
 	randomResolution( 10000 ),
-	exponentialBase( 8 ),
-	minCloudSize( 8 ),
-	maxCloudSize( 18 ) {
+	exponentialBase( 22 ),
+	minCloudSize( 11 ),
+	maxCloudSize( 20 ) {
 	
 	std::random_device rd;
 	gen = std::mt19937( rd() );

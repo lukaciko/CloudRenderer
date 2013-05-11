@@ -20,9 +20,10 @@ const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
-const float densityCutoff = 0.07;
+const float densityCutoff = 0.06;
 const float densityFactor = 0.35;
-const float attenuationFactor = 0.12;
+const float attenuationFactor = 0.10;
+const vec3 shadeColor = vec3( 0.0, 0.0, 0.2 );
 
 out vec4 outColor;
 
@@ -73,9 +74,12 @@ void main() {
 			}
 
 			// add color depending on cell density and attenuation
-			if( cellDensity > 0.001 )
-				color = mix( color, vec3( attenuation, attenuation, mix ( attenuation, 1.0, 0.2 ) ), cellDensity * 5); // *2 - not nice
-				//TODO: ones in front count more
+			if( cellDensity > 0.001 ) {
+				color = mix( color, vec3( mix ( attenuation, 1.0, shadeColor.x ), 
+				                          mix ( attenuation, 1.0, shadeColor.y ), 
+										  mix ( attenuation, 1.0, shadeColor.z )), 
+					         cellDensity *5 ); // *5 - not nice, da niso tolk prozorni
+			}
 		}
 
 		pos -= viewRay.direction * viewStepSize;

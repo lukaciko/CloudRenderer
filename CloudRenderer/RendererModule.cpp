@@ -38,9 +38,9 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 		return false;
 	}
 
-	glfwOpenWindowHint( GLFW_OPENGL_VERSION_MAJOR, 3 );
+	/*glfwOpenWindowHint( GLFW_OPENGL_VERSION_MAJOR, 3 );
 	glfwOpenWindowHint( GLFW_OPENGL_VERSION_MINOR, 2 );
-	glfwOpenWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+	glfwOpenWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );*/
 	glfwOpenWindowHint( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
 
 	if (glfwOpenWindow( windowWidth, windowHeight, 0, 0, 0, 0, 24, 8, 

@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GUIControls.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="RenderUtility.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="RendererModule.h" />
     <ClInclude Include="SimulatorModule.h" />
     <ClInclude Include="mainLoop.h" />
+    <ClInclude Include="Slider.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -106,12 +108,14 @@
     <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="CloudRenderer.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="GUIControls.cpp" />
     <ClCompile Include="RendererModule.cpp" />
     <ClCompile Include="RenderUtility.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SimulationData.cpp" />
     <ClCompile Include="SimulatorModule.cpp" />
     <ClCompile Include="mainLoop.cpp" />
+    <ClCompile Include="Slider.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

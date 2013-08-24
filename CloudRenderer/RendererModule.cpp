@@ -97,6 +97,8 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 			interpolatedData[i][j] = new float[gridZ];
 	}
 
+	// Initialize the sliders
+	controls.addSlider( "Slider1", "densityCutoff", 0.0f, 1.0f );
 
 	return true;
 
@@ -117,6 +119,7 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 	
 	// Update the camera
 	camera.updateCamera();
+	controls.update();
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
@@ -131,6 +134,9 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 		renderRayCastingClouds( data, time );
 	
 	glfwUnlockMutex( simMutex );
+
+	// Render the controls in orthographic mode
+	controls.render();
 
 	// Check for errors
 	GLint glErr = glGetError();

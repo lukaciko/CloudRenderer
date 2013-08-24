@@ -5,6 +5,7 @@
 
 #include "SimulationData.h"
 #include "Camera.h"
+#include "GUIControls.h"
 
 class RendererModule {
 public:
@@ -26,6 +27,7 @@ private:
 	float*** interpolatedData;
 
 	Camera camera;
+	GUIControls controls;
 	glm::mat4 perspectiveProjection;
 	glm::vec3 sunPosition;
 	glm::mat4 sunTransformation;

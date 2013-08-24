@@ -61,7 +61,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 		createRandomCloud();
 		loopEntered = true;
 	}
-	if( loopEntered ) calculateDistSite( distSize );
+	if( loopEntered ) calculateDistSize( distSize );
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -72,7 +72,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 		for( int j = 0; j != y; ++j )
 			for(int k = 0; k != z; ++k) {
 
-				// Compute clouds first, since they don't influence  act/hum
+				// Compute clouds first, since they don't influence act/hum
 				cld[i][j][k] = cld[i][j][k] || act[i][j][k];
 				bool newAct = !act[i][j][k] && hum[i][j][k] &&
 					fAc[i][j][k];
@@ -123,7 +123,7 @@ void SimulatorModule::createRandomCloud() {
 
 }
 
-void SimulatorModule::calculateDistSite( float *** distSize ) {
+void SimulatorModule::calculateDistSize( float *** distSize ) {
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -137,6 +137,7 @@ void SimulatorModule::calculateDistSite( float *** distSize ) {
 						// We actually need just the size/dist ratio
 						minDistSize = dist / it->getSize();
 				}
+				// Calculate exponent so we have rapid descent of cloud density
 				minDistSize = pow( exponentialBase, -minDistSize );
 				if( minDistSize < 0.01 ) minDistSize = 0;
 				distSize[i][j][k] = minDistSize;

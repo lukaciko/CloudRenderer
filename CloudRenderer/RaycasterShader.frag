@@ -37,7 +37,7 @@ void main() {
 	// Direction in view splace
 	vec3 viewDirection;
 	viewDirection.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
-	viewDirection.xy *= tanFOV; // tan( fov / 2 )
+	//viewDirection.xy *= tanFOV; // tan( fov / 2 )
 	viewDirection.z = -1;
 
 	// Transform direction to world	space

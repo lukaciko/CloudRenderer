@@ -48,7 +48,7 @@ private:
 	// Creates a cloud at random position with random size
 	void createRandomCloud();
 	// Recalculates dist/size, should be called when clouds are created
-	void calculateDistSite( float *** distSize );
+	void calculateDistSize( float *** distSize );
 	// Calculate continous cloud density distribution for entire grid
 	void calculateDensity( bool *** cld, float *** den );
 	// Calculate continous cloud density distribution for one cell

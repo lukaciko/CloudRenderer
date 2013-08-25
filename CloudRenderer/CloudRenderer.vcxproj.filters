@@ -57,6 +57,9 @@
     <ClInclude Include="GUIControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SOIL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -106,5 +109,16 @@
     <None Include="RaycasterShader.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="GUIShader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="GUIShader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SliderHandle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

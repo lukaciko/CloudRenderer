@@ -100,6 +100,7 @@
     <ClInclude Include="SimulatorModule.h" />
     <ClInclude Include="mainLoop.h" />
     <ClInclude Include="Slider.h" />
+    <ClInclude Include="SOIL.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -122,8 +123,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="GUIShader.frag" />
+    <None Include="GUIShader.vert" />
     <None Include="RaycasterShader.frag" />
     <None Include="RaycasterShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SliderHandle.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,7 @@ private:
 	void renderRayCastingClouds( const SimulationData& data, 
 		const double frameTime );
 	void defineRaycasterLayout( const GLuint shaderProgram );
+	void defineGUILayout( const GLuint shaderProgram );
 
 	bool showVRC;
 

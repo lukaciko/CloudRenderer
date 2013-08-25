@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "RenderUtility.h"
+#include "SOIL.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -8,9 +9,6 @@ GLuint VBOs[5];
 GLuint numVBOs;
 GLuint EBOs[5];
 GLuint numEBOs;
-
-GLuint circleTexture;
-GLuint volumeTexture;
 
 // Need to pass sizeof(vertices) as well because of dynamic arrays
 GLuint createVBO( float vertices [], int size ) {
@@ -41,11 +39,26 @@ void deleteEBOs() {
 	glDeleteBuffers( numEBOs, EBOs );
 }
 
-void initializeTextures() {
-	// We can get away with such initialization because we only need one 3D 
-	// texture
+void initializeTextures( GLuint volumeTexture, GLuint * planarTextures ) {
+	// We need one 3D texture and 2 2D textures
 	
-	// Generate the textures
+	// Generate the 2D textures using pngs
+	glGenTextures( 2, planarTextures );
+	glBindTexture( GL_TEXTURE_2D, planarTextures[0] );
+
+	int width, height;
+	unsigned char* image;
+	image = SOIL_load_image( "SliderHandle.png", &width, &height, 0, SOIL_LOAD_RGB );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, 
+		GL_UNSIGNED_BYTE, image );
+	SOIL_free_image_data( image );
+
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+	// Generate the 3D textures
 	glGenTextures( 1, &volumeTexture );
 	glBindTexture( GL_TEXTURE_3D, volumeTexture );
 	
@@ -58,9 +71,9 @@ void initializeTextures() {
 
 }
 
-void deleteTextures() {
-	glDeleteTextures( 1, &circleTexture );
+void deleteTextures( GLuint volumeTexture, GLuint* planarTextures ) {
 	glDeleteTextures( 1, &volumeTexture );
+	glDeleteTextures( 2, planarTextures );
 }
 
 void setUniform( const char* name, const float value ) {

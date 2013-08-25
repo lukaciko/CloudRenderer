@@ -17,8 +17,13 @@ const char * windowTitle = "Real-timeish Cloud Renderer";
 
 ShaderManager shaderManager;
 GLuint raycasterShaderProgram;
-GLuint VAOs [1];
+GLuint guiShaderProgram;
+GLuint VAOs [2];
 GLuint cubeVBO;
+GLuint guiVBO;
+
+GLuint volumeTexture;
+GLuint planarTextures[2];
 
 float nearPlane = 0.1f;
 float farPlane = 25.0f;
@@ -64,26 +69,58 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 	std::cout << "Running OpenGL version " << glGetString(GL_VERSION) << "\n";
 
-	glGenVertexArrays( 1, VAOs );
-	glBindVertexArray( VAOs[0] );
-
+	
 	// Load and compile shaders
 	raycasterShaderProgram = shaderManager.createFromFile( 
 		"RaycasterShader.vert", "RaycasterShader.frag" );
-
-	initializeTextures();
+	guiShaderProgram = shaderManager.createFromFile( 
+		"GUIshader.vert", "GUIShader.frag" );
 	
+	initializeTextures( volumeTexture, planarTextures );
+	
+	glGenVertexArrays( 2, VAOs );
+
+	// Define the raycasting VAO
+	glBindVertexArray( VAOs[0] );
+
 	// Create cube that encapsulates the grid for ray casting
 	float cubeVertices[24];
 	getCubeVertices( 0, 1, 0, 1, 0, 1, cubeVertices );
 
 	cubeVBO = createVBO( cubeVertices, sizeof( cubeVertices )) ;
-	glBindVertexArray( VAOs[0] );
 	defineRaycasterLayout( raycasterShaderProgram );
 
 	int cubeElements[36];
 	getCubeElements( cubeElements );
 	createEBO( cubeElements, sizeof( cubeElements ));
+	
+	//Define the GUI VAO
+	glBindVertexArray( VAOs[1] );
+	glBindTexture( GL_TEXTURE_2D, planarTextures[0] );
+
+	float vertices[] = {
+	//  Position      Texcoords
+		 0.5f,  1.0f, 0.0f, 0.0f, // Top-left
+		 1.0f,  1.0f, 1.0f, 0.0f, // Top-right
+		 1.0f,  0.0f, 1.0f, 1.0f, // Bottom-right
+		 0.5f,  0.0f, 0.0f, 1.0f  // Bottom-left
+	};
+
+	createVBO( vertices, sizeof( vertices ) );
+
+	// Create an element array
+	GLuint ebo;
+	glGenBuffers( 1, &ebo );
+
+	GLuint elements[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( elements ), elements, GL_STATIC_DRAW );
+
+	defineGUILayout( guiShaderProgram );
 
 	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
@@ -105,7 +142,7 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 }
 
 void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram ) {
-
+	
 	GLint posAttrib = glGetAttribLocation( raycasterShaderProgram, 
 		"cubeVert" );
 	glEnableVertexAttribArray( posAttrib );
@@ -114,9 +151,21 @@ void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram 
 
 }
 
+void RendererModule::defineGUILayout( const GLuint guiShaderProgram ) {
+
+	GLint posAttrib = glGetAttribLocation( guiShaderProgram, "position" );
+	glEnableVertexAttribArray( posAttrib );
+	glVertexAttribPointer( posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof( float ), 0 );
+	
+	GLint texAttrib = glGetAttribLocation( guiShaderProgram, "texCoord" );
+	glEnableVertexAttribArray( texAttrib );
+	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof( float ), 
+		(void*)( 2 * sizeof( float ) ) );
+
+}
+
 void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex, 
 						   const double time ) {
-	
 	// Update the camera
 	camera.updateCamera();
 	controls.update();
@@ -129,14 +178,17 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 	glfwLockMutex( simMutex );
 
 	interpolateCloudData( data, time );
-
+	
 	if( showVRC )
 		renderRayCastingClouds( data, time );
 	
 	glfwUnlockMutex( simMutex );
-
+	
+	glBindVertexArray( VAOs[1] );
+	glUseProgram( guiShaderProgram );
 	// Render the controls in orthographic mode
 	controls.render();
+	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
 
 	// Check for errors
 	GLint glErr = glGetError();
@@ -219,7 +271,7 @@ void RendererModule::terminate() {
 
 	shaderManager.terminate();
 	glDeleteVertexArrays( 2, VAOs );
-	deleteTextures();
+	deleteTextures( volumeTexture, planarTextures );
 
 	// Terminate GLFW
 	glfwTerminate();

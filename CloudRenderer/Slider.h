@@ -4,10 +4,10 @@
 #include <string>
 
 namespace slider_consts {
-	const float sliderLength = 0.25f;
+	const float sliderLength = 0.30f;
 	const float buttonSize = 0.05f;
 	const float sliderOffsetY = 0.12f;
-	const float sliderPositionX = 0.5f;
+	const float sliderPositionX = 0.65f;
 	const float sliderPositionY = 0.90f;
 }
 
@@ -33,11 +33,13 @@ public:
 private:
 	const std::string text;
 	const std::string shaderProperty;
-	Position sliderPosition;
+	const Position sliderPosition;
 	Position buttonPosition;
 	const float min;
 	const float max;
-	float current;
+	
+	float currentPercentage;
+	bool buttonPressed;
 };
 
 #endif

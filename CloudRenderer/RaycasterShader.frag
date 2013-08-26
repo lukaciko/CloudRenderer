@@ -14,15 +14,16 @@ uniform mat4 viewInverse;
 uniform float near;
 uniform float far;
 
+uniform float densityCutoff = 0.06;
+uniform float densityFactor = 0.35;
+uniform float attenuationFactor = 0.05;
+
 const vec3 sunPosition = vec3( 5, 5, 5 );
 const float maxDistance = sqrt(3.0); // Length of a cube diagonal
 const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
-const float densityCutoff = 0.06;
-const float densityFactor = 0.35;
-const float attenuationFactor = 0.05;
 const vec3 shadeColor = vec3( 0.0, 0.0, 0.2 );
 
 out vec4 outColor;

@@ -142,9 +142,9 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 	// Initialize the sliders
 	controls.addSlider( "Slider1", "densityCutoff", 0.0f, 1.0f );
-	controls.addSlider( "Slider2", "densityCutoff", 0.0f, 1.0f );
-	controls.addSlider( "Slider3", "densityCutoff", 0.0f, 1.0f );
-	controls.addSlider( "Slider4", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider2", "densityFactor", 0.0f, 1.0f );
+	controls.addSlider( "densityFactor", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider4", "attenuationFactor", 0.0f, 1.0f );
 	controls.addSlider( "Slider5", "densityCutoff", 0.0f, 1.0f );
 
 	return true;
@@ -178,7 +178,6 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 						   const double time ) {
 	// Update the camera
 	camera.updateCamera();
-	controls.update();
 
 	// Clear the screen with background (sky) color
 	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
@@ -193,6 +192,9 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 		renderRayCastingClouds( data, time );
 	
 	glfwUnlockMutex( simMutex );
+
+	glUseProgram( raycasterShaderProgram );
+	controls.update();
 	
 	renderGUI();
 

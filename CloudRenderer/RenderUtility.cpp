@@ -78,38 +78,38 @@ void deleteTextures( GLuint volumeTexture, GLuint* planarTextures ) {
 	glDeleteTextures( 2, planarTextures );
 }
 
-void setUniform( const char* name, const float value ) {
+void setUniform( const std::string name, const float value ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
-	GLint location = glGetUniformLocation( program, name );
+	GLint location = glGetUniformLocation( program, name.c_str() );
 	glUniform1f( location, value );
 
 }
 
-void setUniform( const char* name, const glm::vec2 vector ) {
+void setUniform( const std::string name, const glm::vec2 vector ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
-	GLint location = glGetUniformLocation( program, name );
+	GLint location = glGetUniformLocation( program, name.c_str() );
 	glUniform2f( location, vector.x, vector.y );
 
 }
 
-void setUniform( const char* name, const glm::vec3 vector ) {
+void setUniform( const std::string name, const glm::vec3 vector ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
-	GLint location = glGetUniformLocation( program, name );
+	GLint location = glGetUniformLocation( program, name.c_str() );
 	glUniform3f( location, vector.x, vector.y, vector.z );
 
 }
 
-void setUniform( const char* name, const glm::mat4 matrix ) {
+void setUniform( const std::string name, const glm::mat4 matrix ) {
 
 	GLuint program;
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
-	GLint location = glGetUniformLocation( program, name );
+	GLint location = glGetUniformLocation( program, name.c_str() );
 	glUniformMatrix4fv( location, 1, GL_FALSE, glm::value_ptr( matrix ) );
 }
 

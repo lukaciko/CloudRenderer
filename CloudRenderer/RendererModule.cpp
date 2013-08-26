@@ -7,12 +7,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-#include "ShaderManager.h"
-#include "RenderUtility.h"
 #include "Cube.h"
+#include "Globals.h"
+#include "RenderUtility.h"
+#include "ShaderManager.h"
+#include "Slider.h"
 
-GLuint windowWidth = 1200;
-GLuint windowHeight = 900;
 const char * windowTitle = "Real-timeish Cloud Renderer";
 
 ShaderManager shaderManager;
@@ -48,7 +48,8 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 	glfwOpenWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );*/
 	glfwOpenWindowHint( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
 
-	if (glfwOpenWindow( windowWidth, windowHeight, 0, 0, 0, 0, 24, 8, 
+	if (glfwOpenWindow( global_consts::windowWidth, global_consts::windowHeight,
+		0, 0, 0, 0, 24, 8, 
 		GLFW_WINDOW ) != GL_TRUE) {
 			glfwTerminate();
 			return false;
@@ -99,11 +100,15 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 	glBindTexture( GL_TEXTURE_2D, planarTextures[0] );
 
 	float vertices[] = {
-	//  Position      Texcoords
-		 0.5f,  1.0f, 0.0f, 0.0f, // Top-left
-		 1.0f,  1.0f, 1.0f, 0.0f, // Top-right
-		 1.0f,  0.0f, 1.0f, 1.0f, // Bottom-right
-		 0.5f,  0.0f, 0.0f, 1.0f  // Bottom-left
+    //   Pos, Texcoords
+		-slider_consts::buttonSize,   slider_consts::buttonSize, 
+	 	 0.0f, 0.0f, // Top-left
+		 slider_consts::buttonSize,   slider_consts::buttonSize, 
+		 1.0f, 0.0f, // Top-right
+		 slider_consts::buttonSize,  -slider_consts::buttonSize, 
+		 1.0f, 1.0f, // Bottom-right
+		 -slider_consts::buttonSize, -slider_consts::buttonSize, 
+		 0.0f, 1.0f  // Bottom-left
 	};
 
 	createVBO( vertices, sizeof( vertices ) );
@@ -125,7 +130,8 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
 	perspectiveProjection = glm::perspective( 85.0f, 
-		(float)windowWidth / (float)windowHeight, nearPlane, farPlane );
+		(float)global_consts::windowWidth / (float)global_consts::windowHeight, 
+		nearPlane, farPlane );
 		
 	interpolatedData = new float ** [gridX];
 	for( int i = 0; i != gridX; ++i ) {
@@ -136,6 +142,10 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 	// Initialize the sliders
 	controls.addSlider( "Slider1", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider2", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider3", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider4", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "densityCutoff", 0.0f, 1.0f );
 
 	return true;
 
@@ -184,11 +194,7 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 	
 	glfwUnlockMutex( simMutex );
 	
-	glBindVertexArray( VAOs[1] );
-	glUseProgram( guiShaderProgram );
-	// Render the controls in orthographic mode
-	controls.render();
-	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+	renderGUI();
 
 	// Check for errors
 	GLint glErr = glGetError();
@@ -234,7 +240,8 @@ void RendererModule::renderRayCastingClouds( const SimulationData & data,
 	setUniform( "viewInverse", glm::inverse(camera.getLookAtMatrix()) );
 	setUniform( "proj", perspectiveProjection );
 	setUniform( "tanFOV", tanFOV );
-	setUniform( "screenSize", glm::vec2( windowWidth, windowHeight ) );
+	setUniform( "screenSize", glm::vec2( global_consts::windowWidth, 
+		global_consts::windowHeight ) );
 	setUniform( "eyePosition", camera.getEyeLocation() );
 	setUniform( "near", nearPlane );
 	setUniform( "far", farPlane );
@@ -266,6 +273,18 @@ void RendererModule::renderRayCastingClouds( const SimulationData & data,
 	glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0 );
 
 } 
+
+void RendererModule::renderGUI() {
+
+	glBindVertexArray( VAOs[1] );
+	glUseProgram( guiShaderProgram );
+	
+	glDisable( GL_DEPTH_TEST );
+	
+	// Render the controls in orthographic mode
+	controls.render();
+
+}
 
 void RendererModule::terminate() {
 

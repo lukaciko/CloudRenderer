@@ -20,6 +20,7 @@ private:
 		const double frameTime );
 	void renderRayCastingClouds( const SimulationData& data, 
 		const double frameTime );
+	void renderGUI();
 	void defineRaycasterLayout( const GLuint shaderProgram );
 	void defineGUILayout( const GLuint shaderProgram );
 

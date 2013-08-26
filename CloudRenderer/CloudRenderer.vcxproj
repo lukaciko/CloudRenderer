@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="GUIControls.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Cloud.h" />

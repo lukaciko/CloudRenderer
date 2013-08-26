@@ -15,5 +15,7 @@ void setUniform( const char* name, const float value );
 void setUniform( const char* name, const glm::vec2 vector );
 void setUniform( const char* name, const glm::vec3 vector );
 void setUniform( const char* name, const glm::mat4 matrix );
+float convertXToRelative( const int x );
+float convertYToRelative( const int y );
 
 #endif

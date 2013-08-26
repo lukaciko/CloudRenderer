@@ -34,9 +34,9 @@ namespace loop {
 	bool simPaused = false;
 
 	// Function that asynchronously runs simulation 
-	void GLFWCALL Simulate( void *arg) {
+	void GLFWCALL Simulate( void *arg ) {
 		
-		while(!exit) {
+		while( !exit ) {
 			if( !simPaused ) {
 				
 				double startTime = glfwGetTime();

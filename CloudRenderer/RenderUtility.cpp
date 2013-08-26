@@ -1,9 +1,11 @@
 #include "stdafx.h"
 
 #include "RenderUtility.h"
-#include "SOIL.h"
 
 #include <glm/gtc/type_ptr.hpp>
+
+#include "SOIL.h"
+#include "Globals.h"
 
 GLuint VBOs[5];
 GLuint numVBOs;
@@ -109,5 +111,12 @@ void setUniform( const char* name, const glm::mat4 matrix ) {
     glGetIntegerv( GL_CURRENT_PROGRAM, (GLint*) &program );
 	GLint location = glGetUniformLocation( program, name );
 	glUniformMatrix4fv( location, 1, GL_FALSE, glm::value_ptr( matrix ) );
+}
 
+float convertXToRelative( const int x ) {
+	return ( static_cast<float>( x ) / global_consts::windowWidth ) * 2.0f - 1.0f;
+}
+
+float convertYToRelative( const int y ) {
+	return -(( static_cast<float>( y ) / global_consts::windowHeight ) * 2.0f - 1.0f);
 }

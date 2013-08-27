@@ -17,14 +17,19 @@ uniform float far;
 uniform float densityCutoff = 0.06;
 uniform float densityFactor = 0.35;
 uniform float attenuationFactor = 0.05;
+uniform float colorMultiplier = 5.0f;
+uniform float shadeColorRed = 0.0f;
+uniform float shadeColorGreen = 0.0f;
+uniform float shadeColorBlue = 0.2f;
+uniform float sunPositionX = 0.5f;
+uniform float sunPositionY = 0.5f;
+uniform float sunPositionZ = 0.5f;
 
-const vec3 sunPosition = vec3( 5, 5, 5 );
 const float maxDistance = sqrt(3.0); // Length of a cube diagonal
 const int viewSamples = 128;
 const float viewStepSize = maxDistance/viewSamples;
 const int lightSamples = 64;
 const float lightStepSize = maxDistance/viewSamples;
-const vec3 shadeColor = vec3( 0.0, 0.0, 0.2 );
 
 out vec4 outColor;
 
@@ -50,7 +55,10 @@ void main() {
 	vec3 pos = viewRay.origin;
 	pos += viewDirection * viewStepSize * viewSamples;
 	//TODO: move to cube beginning
-		
+
+	vec3 shadeColor = vec3( shadeColorRed, shadeColorGreen, shadeColorBlue );
+	vec3 sunPosition = vec3( sunPositionX, sunPositionY, sunPositionZ );
+
 	for( int i = 0; i < viewSamples; ++i ) {
 		
 		float cellDensity = texture( density, pos ).x;
@@ -79,7 +87,7 @@ void main() {
 				color = mix( color, vec3( mix ( attenuation, 1.0, shadeColor.x ), 
 				                          mix ( attenuation, 1.0, shadeColor.y ), 
 										  mix ( attenuation, 1.0, shadeColor.z )), 
-					         cellDensity *5 ); // *5 - not nice, da niso tolk prozorni
+					         cellDensity * colorMultiplier); // *5 - not nice, da niso tolk prozorni
 			}
 		}
 

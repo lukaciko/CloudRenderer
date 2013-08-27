@@ -42,7 +42,7 @@ void Slider::update() {
 			buttonPosition.X = maxPos;
 	
 		currentPercentage = ( buttonPosition.X - minPos ) / ( maxPos - minPos );
-		setUniform( shaderProperty, currentPercentage );
+		setUniform( shaderProperty, min + currentPercentage * (max - min) );
 	}
 
 }

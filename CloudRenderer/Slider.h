@@ -5,8 +5,8 @@
 
 namespace slider_consts {
 	const float sliderLength = 0.30f;
-	const float buttonSize = 0.05f;
-	const float sliderOffsetY = 0.12f;
+	const float buttonSize = 0.03f;
+	const float sliderOffsetY = 0.07f;
 	const float sliderPositionX = 0.65f;
 	const float sliderPositionY = 0.90f;
 }

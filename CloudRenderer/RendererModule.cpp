@@ -143,9 +143,14 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 	// Initialize the sliders
 	controls.addSlider( "Slider1", "densityCutoff", 0.0f, 1.0f );
 	controls.addSlider( "Slider2", "densityFactor", 0.0f, 1.0f );
-	controls.addSlider( "densityFactor", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "colorMultiplier", 1.0f, 10.0f );
 	controls.addSlider( "Slider4", "attenuationFactor", 0.0f, 1.0f );
-	controls.addSlider( "Slider5", "densityCutoff", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "shadeColorRed", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "shadeColorGreen", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "shadeColorBlue", 0.0f, 1.0f );
+	controls.addSlider( "Slider5", "sunPositionX", -1.0f, 1.0f );
+	controls.addSlider( "Slider5", "sunPositionY", -1.0f, 1.0f );
+	controls.addSlider( "Slider5", "sunPositionZ", -1.0f, 1.0f );
 
 	return true;
 

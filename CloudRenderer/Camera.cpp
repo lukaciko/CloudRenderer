@@ -51,7 +51,7 @@ void Camera::updateCamera() {
 // Rotations with right mouse button
 void Camera::rightButtonUpdates() {
 	float rotationFactor = 0.2f;
-	if( !glfwGetMouseButton(1) ) {
+	if( glfwGetMouseButton(1) ) {
 		if( prevMousePressed ) {
 			// Right mouse button has been pressed for more than 1 frame
 			int newMouseX, newMouseY;

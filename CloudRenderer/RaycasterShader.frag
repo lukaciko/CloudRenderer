@@ -1,7 +1,5 @@
 #version 330
 
-in vec3 color;
-
 uniform sampler3D density;
 
 // tan( field of view / 2 )
@@ -10,9 +8,6 @@ uniform float tanFOV;
 uniform vec3 eyePosition;
 uniform vec2 screenSize;
 uniform mat4 viewInverse;
-	
-uniform float near;
-uniform float far;
 
 uniform float densityCutoff = 0.06;
 uniform float densityFactor = 0.35;

@@ -287,9 +287,15 @@ void RendererModule::renderGUI() {
 	glUseProgram( guiShaderProgram );
 	
 	glDisable( GL_DEPTH_TEST );
+	glDepthMask( GL_FALSE );
+	glEnable( GL_BLEND );
+	glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
 	
 	// Render the controls in orthographic mode
 	controls.render();
+
+	glDisable( GL_BLEND );
+	glDepthMask( GL_TRUE );
 
 }
 

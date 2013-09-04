@@ -9,9 +9,9 @@
 class GUIControls {
 public:
 	void update();
-	void render();
-	void addSlider( std::string text, std::string shaderProperty, 
-		float min, float max );
+	void render( const GLuint * textures );
+	void addSlider( const std::string text, const std::string shaderProperty, 
+		const float min, const float max );
 private:
 	std::vector<Slider> sliders;
 };

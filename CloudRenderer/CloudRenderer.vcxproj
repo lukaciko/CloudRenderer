@@ -131,6 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="SliderHandle.png" />
+    <Image Include="SliderIndicator.png" />
+    <Image Include="SliderNormal.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

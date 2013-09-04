@@ -42,23 +42,27 @@ void deleteEBOs() {
 }
 
 void initializeTextures( GLuint volumeTexture, GLuint * planarTextures ) {
-	// We need one 3D texture and 2 2D textures
+	// We need one 3D texture and several 2D textures
 	
 	// Generate the 2D textures using pngs
-	glGenTextures( 2, planarTextures );
-	glBindTexture( GL_TEXTURE_2D, planarTextures[0] );
+	glGenTextures( 3, planarTextures );
 
 	int width, height;
 	unsigned char* image;
-	image = SOIL_load_image( "SliderHandle.png", &width, &height, 0, SOIL_LOAD_RGBA );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, 
-		GL_UNSIGNED_BYTE, image );
-	SOIL_free_image_data( image );
 
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	const char* files[] = { "SliderHandle.png", "SliderIndicator.png", "SliderNormal.png" };
+	for( int i = 0; i < 2; ++i ) {
+		image = SOIL_load_image( files[i], &width, &height, 0, SOIL_LOAD_RGBA );
+		glBindTexture( GL_TEXTURE_2D, planarTextures[i] );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, 
+			GL_UNSIGNED_BYTE, image );
+		SOIL_free_image_data( image );
+
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	}
 
 	// Generate the 3D textures
 	glGenTextures( 1, &volumeTexture );

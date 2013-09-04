@@ -9,6 +9,9 @@ uniform vec3 eyePosition;
 uniform vec2 screenSize;
 uniform mat4 viewInverse;
 
+float near;
+float far;
+
 uniform float densityCutoff = 0.06;
 uniform float densityFactor = 0.35;
 uniform float attenuationFactor = 0.05;
@@ -39,7 +42,7 @@ void main() {
 	vec3 viewDirection;
 	viewDirection.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
 	//viewDirection.xy *= tanFOV; // tan( fov / 2 )
-	viewDirection.z = -1;
+	viewDirection.z = -1/tanFOV; //-1;
 
 	// Transform direction to world	space
 	viewDirection = ( viewInverse * vec4( viewDirection, 0 ) ).xyz;
@@ -82,7 +85,7 @@ void main() {
 				color = mix( color, vec3( mix ( attenuation, 1.0, shadeColor.x ), 
 				                          mix ( attenuation, 1.0, shadeColor.y ), 
 										  mix ( attenuation, 1.0, shadeColor.z )), 
-					         cellDensity * colorMultiplier); // *5 - not nice, da niso tolk prozorni
+					         cellDensity * colorMultiplier);
 			}
 		}
 
@@ -92,5 +95,5 @@ void main() {
 
 	outColor = vec4( color, 255 );
 	vec4 debug = vec4( viewRay.direction, 1.0 );
-	outColor = mix( outColor, debug, 0.0 );
+	outColor = mix( outColor, debug, 0.00 );
 }

@@ -1,15 +1,18 @@
 #version 150
 
-in vec2 position;
-in vec2 texCoord;
+in vec2 coord;
 
-out vec2 TexCoord;
+out vec2 Coord;
 
-uniform float offsetX;
-uniform float offsetY;
+uniform float sizeX;
+uniform float sizeY;
+uniform float positionX;
+uniform float positionY;
+
 
 void main() {
-	TexCoord = texCoord;
+	Coord = coord;
 	// Render them in upper right corner
-	gl_Position = vec4( position.x + offsetX, position.y + offsetY, 0.0, 1.0 );
+	gl_Position = vec4( positionX + ( coord.x * 2 - 1 ) * sizeX, 
+	   positionY + ( coord.y * 2 - 1) * sizeY, 0.0, 1.0 );
 }

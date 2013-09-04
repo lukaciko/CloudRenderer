@@ -3,8 +3,9 @@
 #include "GUIControls.h"
 #include "RenderUtility.h"
 
-void GUIControls::addSlider( std::string text, std::string shaderProperty, 
-		float min, float max ) {
+void GUIControls::addSlider( const std::string text, 
+		const std::string shaderProperty, 
+		const float min, const float max ) {
 	Slider slider = Slider( text, shaderProperty, min, max, 
 		sliders.size() * slider_consts::sliderOffsetY * -1 );
 	sliders.push_back(slider);
@@ -16,9 +17,9 @@ void GUIControls::update() {
 		s.update();
 }
 
-void GUIControls::render() {
+void GUIControls::render( const GLuint * textures ) {
 	float offset = 0;
 	for ( Slider &s : sliders ) {
-		s.render();
+		s.render( textures );
 	}
 }

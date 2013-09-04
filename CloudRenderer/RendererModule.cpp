@@ -18,18 +18,18 @@ const char * windowTitle = "Real-timeish Cloud Renderer";
 ShaderManager shaderManager;
 GLuint raycasterShaderProgram;
 GLuint guiShaderProgram;
-GLuint VAOs [2];
+GLuint VAOs[2];
 GLuint cubeVBO;
 GLuint guiVBO;
 
 GLuint volumeTexture;
-GLuint planarTextures[2];
+GLuint planarTextures[3];
 
-float nearPlane = 0.1f;
+float nearPlane = 0.00001f;
 float farPlane = 25.0f;
 
-float fieldOfView = 85.0f;
-float tanFOV = tan( fieldOfView / 2.0f / 360 * 2 * 3.14f );
+float fieldOfView = 75.0f;
+float tanFOV = tan( fieldOfView / 2.0f / 360.0f * 2.0f * 3.14f );
 
 RendererModule::RendererModule() {
 	showVRC = true;
@@ -101,13 +101,9 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 	float vertices[] = {
     //   Pos, Texcoords
-		-slider_consts::buttonSize,   slider_consts::buttonSize, 
 	 	 0.0f, 0.0f, // Top-left
-		 slider_consts::buttonSize,   slider_consts::buttonSize, 
 		 1.0f, 0.0f, // Top-right
-		 slider_consts::buttonSize,  -slider_consts::buttonSize, 
 		 1.0f, 1.0f, // Bottom-right
-		 -slider_consts::buttonSize, -slider_consts::buttonSize, 
 		 0.0f, 1.0f  // Bottom-left
 	};
 
@@ -129,7 +125,7 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 	// Initialize the camera and the projetion matrices
 	camera.initialize( gridX, gridY, gridZ );
-	perspectiveProjection = glm::perspective( 85.0f, 
+	perspectiveProjection = glm::perspective( fieldOfView, 
 		(float)global_consts::windowWidth / (float)global_consts::windowHeight, 
 		nearPlane, farPlane );
 		
@@ -168,14 +164,10 @@ void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram 
 
 void RendererModule::defineGUILayout( const GLuint guiShaderProgram ) {
 
-	GLint posAttrib = glGetAttribLocation( guiShaderProgram, "position" );
-	glEnableVertexAttribArray( posAttrib );
-	glVertexAttribPointer( posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof( float ), 0 );
-	
-	GLint texAttrib = glGetAttribLocation( guiShaderProgram, "texCoord" );
+	GLint texAttrib = glGetAttribLocation( guiShaderProgram, "coord" );
 	glEnableVertexAttribArray( texAttrib );
-	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof( float ), 
-		(void*)( 2 * sizeof( float ) ) );
+	glVertexAttribPointer( texAttrib, 2, GL_FLOAT, GL_FALSE, 2 * sizeof( float ), 
+		0 );
 
 }
 
@@ -221,18 +213,15 @@ void RendererModule::interpolateCloudData( const SimulationData & data,
 
 	// Calculate relative difference for linear interpolation
 	float relDiff = (time - data.nextTime)/(data.nextTime - data.prevTime);
-	if( relDiff > 1.0f )relDiff = 1.0f;
+	if( relDiff > 1.0f ) relDiff = 1.0f;
 
 	for( int i = 0; i < x; ++i ) 
 		for( int j = 0; j < y; ++j ) 
 			for( int k = 0; k < z; ++k )
-				if( data.nextDen[i][j][k] > 0.0f ) {
-
+				if( data.prevDen[i][j][k] > 0.0f )
 					// Lineary interpolate the density
 					interpolatedData[i][j][k] = data.prevDen[i][j][k] + relDiff
 						* (data.nextDen[i][j][k] - data.prevDen[i][j][k] );
-
-				}
 				else
 					interpolatedData[i][j][k] = 0.0f;
 }
@@ -254,7 +243,7 @@ void RendererModule::renderRayCastingClouds( const SimulationData & data,
 	setUniform( "far", farPlane );
 
 	glDisable( GL_CULL_FACE );
-	glEnable( GL_DEPTH_TEST );
+	//glEnable( GL_DEPTH_TEST );
 
 	int x = data.getGridLength();
 	int y = data.getGridWidth();
@@ -292,7 +281,7 @@ void RendererModule::renderGUI() {
 	glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
 	
 	// Render the controls in orthographic mode
-	controls.render();
+	controls.render( planarTextures );
 
 	glDisable( GL_BLEND );
 	glDepthMask( GL_TRUE );

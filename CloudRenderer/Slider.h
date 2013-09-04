@@ -5,6 +5,7 @@
 
 namespace slider_consts {
 	const float sliderLength = 0.30f;
+	const float sliderHeight = 0.008f;
 	const float buttonSize = 0.03f;
 	const float sliderOffsetY = 0.07f;
 	const float sliderPositionX = 0.65f;
@@ -25,10 +26,10 @@ namespace {
 
 class Slider {
 public:
-	Slider( std::string text, std::string shaderProperty, 
-		float min, float max, float sliderPositionY );
+	Slider( const std::string text, const std::string shaderProperty, 
+		const float min, const float max, const float sliderPositionY );
 	void update();
-	void render();
+	void render( const GLuint * textures );
 	float getPercentage();
 private:
 	const std::string text;

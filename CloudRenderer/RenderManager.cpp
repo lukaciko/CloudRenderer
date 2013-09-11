@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "RendererModule.h"
+#include "RenderManager.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -10,32 +10,17 @@
 #include "Cube.h"
 #include "Globals.h"
 #include "RenderUtility.h"
-#include "ShaderManager.h"
 #include "Slider.h"
 
-const char * windowTitle = "Real-timeish Cloud Renderer";
+RenderManager::RenderManager() :
+	windowTitle( "Real-timeish Cloud Renderer" ),
+	nearPlane( 0.00001f ), 
+	farPlane( 25.0f ),
+	fieldOfView( 75.0f ),
+	tanFOV( tan( fieldOfView / 2.0f / 360.0f * 2.0f * 3.14f )),
+	showVRC( true ) {};
 
-ShaderManager shaderManager;
-GLuint raycasterShaderProgram;
-GLuint guiShaderProgram;
-GLuint VAOs[2];
-GLuint cubeVBO;
-GLuint guiVBO;
-
-GLuint volumeTexture;
-GLuint planarTextures[3];
-
-float nearPlane = 0.00001f;
-float farPlane = 25.0f;
-
-float fieldOfView = 75.0f;
-float tanFOV = tan( fieldOfView / 2.0f / 360.0f * 2.0f * 3.14f );
-
-RendererModule::RendererModule() {
-	showVRC = true;
-};
-
-bool RendererModule::initialize( const int gridX, const int gridY, 
+bool RenderManager::initialize( const int gridX, const int gridY, 
 								 const int gridZ ) {
 
 	// Initialize GLFW and opens a window
@@ -152,7 +137,7 @@ bool RendererModule::initialize( const int gridX, const int gridY,
 
 }
 
-void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram ) {
+void RenderManager::defineRaycasterLayout( const GLuint raycasterShaderProgram ) {
 	
 	GLint posAttrib = glGetAttribLocation( raycasterShaderProgram, 
 		"cubeVert" );
@@ -162,7 +147,7 @@ void RendererModule::defineRaycasterLayout( const GLuint raycasterShaderProgram 
 
 }
 
-void RendererModule::defineGUILayout( const GLuint guiShaderProgram ) {
+void RenderManager::defineGUILayout( const GLuint guiShaderProgram ) {
 
 	GLint texAttrib = glGetAttribLocation( guiShaderProgram, "coord" );
 	glEnableVertexAttribArray( texAttrib );
@@ -171,7 +156,7 @@ void RendererModule::defineGUILayout( const GLuint guiShaderProgram ) {
 
 }
 
-void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex, 
+void RenderManager::draw( const SimulationData& data, GLFWmutex simMutex, 
 						   const double time ) {
 	// Update the camera
 	camera.updateCamera();
@@ -204,9 +189,9 @@ void RendererModule::draw( const SimulationData& data, GLFWmutex simMutex,
 
 }
 
-void RendererModule::interpolateCloudData( const SimulationData & data,  
+void RenderManager::interpolateCloudData( const SimulationData & data,  
 										  const double time ) {
-
+	
 	int x = data.getGridLength();
 	int y = data.getGridWidth();
 	int z = data.getGridHeight();
@@ -227,7 +212,7 @@ void RendererModule::interpolateCloudData( const SimulationData & data,
 }
 
 // Shade clouds by performing volume ray casting
-void RendererModule::renderRayCastingClouds( const SimulationData & data, 
+void RenderManager::renderRayCastingClouds( const SimulationData & data, 
 											const double time ) {
 
 	glBindVertexArray( VAOs[0] );
@@ -270,7 +255,7 @@ void RendererModule::renderRayCastingClouds( const SimulationData & data,
 
 } 
 
-void RendererModule::renderGUI() {
+void RenderManager::renderGUI() {
 
 	glBindVertexArray( VAOs[1] );
 	glUseProgram( guiShaderProgram );
@@ -288,7 +273,7 @@ void RendererModule::renderGUI() {
 
 }
 
-void RendererModule::terminate() {
+void RenderManager::terminate() {
 
 	shaderManager.terminate();
 	glDeleteVertexArrays( 2, VAOs );

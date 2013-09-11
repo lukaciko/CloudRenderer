@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "SimulatorModule.h"
+#include "SimulationManager.h"
 #include "Cloud.h"
 
 #include <algorithm>
@@ -15,7 +15,7 @@
 void computeFAc( bool ***, bool ***, int, int, int, int, int, int );
 float distFrom( int, int, int, int, int, int );
 
-SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
+SimulationManager::SimulationManager( const int x, const int y, const int z ):
 	x( x ),
 	y( y ),
 	z( z ),
@@ -32,7 +32,7 @@ SimulatorModule::SimulatorModule( const int x, const int y, const int z ):
 
 }
 
-void SimulatorModule::stepAsych( SimulationData* data ) {
+void SimulationManager::stepAsych( SimulationData* data ) {
 	
 	simulateCellular( data->hum, 
 		data->act, data->cld, data->fAc, data->distSize );
@@ -41,7 +41,7 @@ void SimulatorModule::stepAsych( SimulationData* data ) {
 
 }
 
-void SimulatorModule::stepMutex( SimulationData* data, const double time ) {
+void SimulationManager::stepMutex( SimulationData* data, const double time ) {
 	
 	// Copy nextDen to prevDen and workDen to nextDen
 	copyGrid( data->prevDen, data->nextDen );
@@ -52,7 +52,7 @@ void SimulatorModule::stepMutex( SimulationData* data, const double time ) {
 	
 }
 
-void SimulatorModule::simulateCellular( bool *** hum, bool *** act, 
+void SimulationManager::simulateCellular( bool *** hum, bool *** act, 
 									    bool *** cld, bool *** fAc, float *** distSize ) {
 	
 	std::cout << "Simulation step\n";
@@ -107,7 +107,7 @@ void SimulatorModule::simulateCellular( bool *** hum, bool *** act,
 
 }
 
-void SimulatorModule::createRandomCloud() {
+void SimulationManager::createRandomCloud() {
 
 	std::cout << "Creating a cloud\n";
 	if( clouds.size() > 10 )
@@ -123,7 +123,7 @@ void SimulatorModule::createRandomCloud() {
 
 }
 
-void SimulatorModule::calculateDistSize( float *** distSize ) {
+void SimulationManager::calculateDistSize( float *** distSize ) {
 
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
@@ -144,7 +144,7 @@ void SimulatorModule::calculateDistSize( float *** distSize ) {
 			}
 }
 
-void SimulatorModule::calculateDensity( bool *** cld, float *** den ) {
+void SimulationManager::calculateDensity( bool *** cld, float *** den ) {
 
 	int S = 5; // Blur matrix is size SxSxS
 	for( int i = 0; i != x; ++i )
@@ -155,7 +155,7 @@ void SimulatorModule::calculateDensity( bool *** cld, float *** den ) {
 
 }
 
-float SimulatorModule::singleDensity( int i, int j, int k, bool *** cld, 
+float SimulationManager::singleDensity( int i, int j, int k, bool *** cld, 
 									 int S ) {
 
 	// Go through kernel
@@ -173,14 +173,14 @@ float SimulatorModule::singleDensity( int i, int j, int k, bool *** cld,
 	return sum/(S*S*S);
 }
 
-float SimulatorModule::fieldFunction( float a ) {
+float SimulationManager::fieldFunction( float a ) {
 
 	return -4.0f/9.0f * pow(a,6) + 17.0f/9 * pow(a,4) - 
 		22.0f/9 * pow(a,2) + 1;
 
 }
 
-void SimulatorModule::copyGrid( float*** copyTo, float*** copyFrom ) {
+void SimulationManager::copyGrid( float*** copyTo, float*** copyFrom ) {
 		
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )

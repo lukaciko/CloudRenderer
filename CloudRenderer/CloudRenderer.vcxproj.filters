@@ -24,12 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimulatorModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RendererModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="mainLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -63,18 +57,18 @@
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CloudRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SimulatorModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RendererModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mainLoop.cpp">
@@ -104,6 +98,12 @@
     <ClCompile Include="GUIControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="RaycasterShader.vert">
@@ -121,6 +121,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="SliderHandle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="SliderIndicator.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="SliderNormal.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -1,8 +1,8 @@
 // A cellular automata approach to simulating clouds, such as described by 
 // Dobashi et al., which extends Nagel's method
 
-#ifndef SIMULATORMODULE_H
-#define SIMULATORMODULE_H
+#ifndef SIMULATIONMANAGER_H
+#define SIMULATIONMANAGER_H
 
 #include "SimulationData.h"
 #include "Cloud.h"
@@ -10,9 +10,9 @@
 #include <random>
 #include <deque>
 
-class SimulatorModule {
+class SimulationManager {
 public:
-	SimulatorModule( const int x, const int y, const int z );
+	SimulationManager( const int x, const int y, const int z );
 	// Part of the simulation step that can be done asynchronously
 	void stepAsych( SimulationData* data );
 	// Part of the simulation step that updates shared data and is protected with

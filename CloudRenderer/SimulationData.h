@@ -7,7 +7,7 @@
 #include <vector>
 
 class SimulationData {
-	friend class SimulatorModule;
+	friend class SimulationManager;
 public:
 	SimulationData( const int gridLength, const int gridWidth, 
 		const int gridHeight ); 

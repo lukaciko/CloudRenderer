@@ -97,8 +97,8 @@
     <ClInclude Include="RenderUtility.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SimulationData.h" />
-    <ClInclude Include="RendererModule.h" />
-    <ClInclude Include="SimulatorModule.h" />
+    <ClInclude Include="RenderManager.h" />
+    <ClInclude Include="SimulationManager.h" />
     <ClInclude Include="mainLoop.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="SOIL.h" />
@@ -111,11 +111,11 @@
     <ClCompile Include="CloudRenderer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="GUIControls.cpp" />
-    <ClCompile Include="RendererModule.cpp" />
+    <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderUtility.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SimulationData.cpp" />
-    <ClCompile Include="SimulatorModule.cpp" />
+    <ClCompile Include="SimulationManager.cpp" />
     <ClCompile Include="mainLoop.cpp" />
     <ClCompile Include="Slider.cpp" />
     <ClCompile Include="stdafx.cpp">

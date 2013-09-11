@@ -5,9 +5,9 @@
 #include <iostream>
 #include <memory>
 
+#include "RenderManager.h"
+#include "SimulationManager.h"
 #include "SimulationData.h"
-#include "RendererModule.h"
-#include "SimulatorModule.h"
 
 namespace loop {
 
@@ -15,13 +15,12 @@ namespace loop {
 	int gridX = 128;
 	int gridY = 128;
 	int gridZ = 128;
-
 	int frameCap = 60;
 	double simulationCap = 2;
-	
+
 	std::unique_ptr<SimulationData> simulationData;
-	std::unique_ptr<SimulatorModule> simulatorModule;
-	std::unique_ptr<RendererModule> rendererModule;
+	std::unique_ptr<SimulationManager> simulationManager;
+	std::unique_ptr<RenderManager> rendererModule;
 
 	// Simulation thread
 	GLFWthread simThread;
@@ -43,11 +42,11 @@ namespace loop {
 
 				// Perform the part of the simulation that can be done 
 				// asynchronously
-				simulatorModule->stepAsych( simulationData.get() );
+				simulationManager->stepAsych( simulationData.get() );
 				
 				// Lock mutex and do the rest of the simulation
 				glfwLockMutex( simMutex );
-				simulatorModule->stepMutex( simulationData.get(), glfwGetTime() );
+				simulationManager->stepMutex( simulationData.get(), glfwGetTime() );
 				glfwUnlockMutex( simMutex );
 
 				glfwSleep( 1.0/simulationCap - glfwGetTime() + startTime );
@@ -70,16 +69,16 @@ namespace loop {
 			new SimulationData( gridX, gridY, gridZ ));
 
 		// Initialize cloud renderer module
-		rendererModule = std::unique_ptr<RendererModule>(
-			new RendererModule());
+		rendererModule = std::unique_ptr<RenderManager>(
+			new RenderManager());
 		if( !rendererModule->initialize( gridX, gridY, gridZ ) )
 			return;
 
 		// Initialize cloud simulation module
-		simulatorModule = std::unique_ptr<SimulatorModule>(
-			new SimulatorModule( gridX, gridY, gridZ ));
+		simulationManager = std::unique_ptr<SimulationManager>(
+			new SimulationManager( gridX, gridY, gridZ ));
 		
-		void* arguments [] = { &simulationData, &simulatorModule };
+		void* arguments [] = { &simulationData, &simulationManager };
 
 		// Create the simulation thread and data mutex
 		simThread = glfwCreateThread( Simulate, arguments );

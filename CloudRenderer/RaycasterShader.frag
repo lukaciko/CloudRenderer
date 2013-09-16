@@ -23,11 +23,15 @@ uniform float sunPositionX = 0.5f;
 uniform float sunPositionY = 0.5f;
 uniform float sunPositionZ = 0.5f;
 
+uniform float viewSamplesF = 128.0f;
+uniform float lightSamplesF = 64.0f;
+
+int viewSamples = int(viewSamplesF);
+int lightSamples = int(lightSamplesF);
+
 const float maxDistance = sqrt(3.0); // Length of a cube diagonal
-const int viewSamples = 128;
-const float viewStepSize = maxDistance/viewSamples;
-const int lightSamples = 64;
-const float lightStepSize = maxDistance/viewSamples;
+float viewStepSize = maxDistance/viewSamples;
+float lightStepSize = maxDistance/viewSamples;
 
 out vec4 outColor;
 
@@ -49,7 +53,7 @@ void main() {
 	
 	Ray viewRay = Ray( eyePosition, normalize( viewDirection ) );	
 
-	vec3 color = vec3( 155/256.0, 225/256.0, 251/256.0 );
+	vec3 color = vec3( 67/256.0, 128/256.0, 183/256.0 );
 	vec3 pos = viewRay.origin;
 	pos += viewDirection * viewStepSize * viewSamples;
 	//TODO: move to cube beginning

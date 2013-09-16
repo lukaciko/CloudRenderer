@@ -57,7 +57,7 @@ void SimulationManager::simulateCellular( bool *** hum, bool *** act,
 	
 	std::cout << "Simulation step\n";
 	bool loopEntered = false;
-	while( clouds.size() < 10 ){ // || gen() % 15 == 0 ) {
+	while( clouds.size() < 10  || gen() % 15 == 0 ) {
 		createRandomCloud();
 		loopEntered = true;
 	}

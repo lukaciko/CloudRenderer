@@ -1,9 +1,11 @@
-CloudRenderer
+Cloud Renderer
 =============
 
-Real-time 3D cloud simulation and rendering (work in progress)
+Real-time 3D cloud simulation and rendering (work in progress).
 
-CloudRenderer is an OpenGL implementation of methods for rendering clouds. Simulation is based on cellular automata, described by Nagel and extended by Dobashi et al. Rendering is based on volume ray casting.
+Cloud Renderer is an OpenGL implementation of methods for simulating and rendering clouds. Simulation is based on cellular automata described by Nagel and extended by Dobashi et al. Rendering is based on volume ray casting. Single scattering of light is approximated by casting shadow rays at sample points.
+
+![Clouds rendered with Cloud Renderer](/screenshot.jpg)
 
 ### Libraries
 

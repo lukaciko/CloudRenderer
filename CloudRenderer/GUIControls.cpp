@@ -5,8 +5,8 @@
 
 void GUIControls::addSlider( const std::string text, 
 		const std::string shaderProperty, 
-		const float min, const float max ) {
-	Slider slider = Slider( text, shaderProperty, min, max, 
+		const float min, const float max, const float initial ) {
+	Slider slider = Slider( text, shaderProperty, min, max, initial, 
 		sliders.size() * slider_consts::sliderOffsetY * -1 );
 	sliders.push_back(slider);
 	// Using a smart pointer would be better so copying is avoided

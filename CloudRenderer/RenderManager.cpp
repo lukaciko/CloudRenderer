@@ -122,18 +122,18 @@ bool RenderManager::initialize( const int gridX, const int gridY,
 	}
 
 	// Initialize the sliders
-	controls.addSlider( "Density Cutoff", "densityCutoff", 0.0f, 0.2f );
-	controls.addSlider( "Density Factor", "densityFactor", 0.0f, 1.0f );
-	controls.addSlider( "Color Multiplier", "colorMultiplier", 1.0f, 10.0f );
-	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 1.0f );
-	controls.addSlider( "Shade ColorRed", "shadeColorRed", 0.0f, 1.0f );
-	controls.addSlider( "Shade ColorGreen", "shadeColorGreen", 0.0f, 1.0f );
-	controls.addSlider( "Shade ColorBlue", "shadeColorBlue", 0.0f, 1.0f );
-	controls.addSlider( "Sun PositionX", "sunPositionX", -1.0f, 1.0f );
-	controls.addSlider( "Sun PositionY", "sunPositionY", -1.0f, 1.0f );
-	controls.addSlider( "Sun PositionZ", "sunPositionZ", -1.0f, 1.0f );
-	controls.addSlider( "View Samples", "viewSamplesF", 1.0f, 1024.0f );
-	controls.addSlider( "Light Samples", "lightSamplesF", 1.0f, 64.0f );
+	controls.addSlider( "Density Cutoff", "densityCutoff", 0.0f, 0.2f, 0.06f );
+	controls.addSlider( "Density Factor", "densityFactor", 0.0f, 1.0f, 0.35f );
+	controls.addSlider( "Color Multiplier", "colorMultiplier", 1.0f, 10.0f, 5.0f );
+	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 1.0f, 0.05f );
+	controls.addSlider( "Shade ColorRed", "shadeColorRed", 0.0f, 1.0f, 0.0f );
+	controls.addSlider( "Shade ColorGreen", "shadeColorGreen", 0.0f, 1.0f, 0.0f );
+	controls.addSlider( "Shade ColorBlue", "shadeColorBlue", 0.0f, 1.0f, 0.2f );
+	controls.addSlider( "Sun PositionX", "sunPositionX", -1.0f, 1.0f, 0.5f );
+	controls.addSlider( "Sun PositionY", "sunPositionY", -1.0f, 1.0f, 0.5f );
+	controls.addSlider( "Sun PositionZ", "sunPositionZ", -1.0f, 1.0f, 0.5f );
+	controls.addSlider( "View Samples", "viewSamplesF", 1.0f, 1024.0f, 128.0f );
+	controls.addSlider( "Light Samples", "lightSamplesF", 1.0f, 64.0f, 64.0f );
 
 	return true;
 

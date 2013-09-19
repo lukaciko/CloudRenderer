@@ -27,19 +27,19 @@ namespace {
 class Slider {
 public:
 	Slider( const std::string text, const std::string shaderProperty, 
-		const float min, const float max, const float sliderPositionY );
+		const float min, const float max, const float intial,
+		const float sliderPositionY );
 	void update();
 	void render( const GLuint * textures );
 	float getPercentage();
 private:
 	const std::string text;
 	const std::string shaderProperty;
-	const Position sliderPosition;
-	Position buttonPosition;
 	const float min;
 	const float max;
-	
 	float currentPercentage;
+	const Position sliderPosition;
+	Position buttonPosition;
 	bool buttonPressed;
 };
 

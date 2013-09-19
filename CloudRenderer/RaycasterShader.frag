@@ -12,9 +12,9 @@ uniform mat4 viewInverse;
 float near;
 float far;
 
-uniform float densityCutoff = 0.06;
-uniform float densityFactor = 0.35;
-uniform float attenuationFactor = 0.05;
+uniform float densityCutoff = 0.06f;
+uniform float densityFactor = 0.35f;
+uniform float attenuationFactor = 0.05f;
 uniform float colorMultiplier = 5.0f;
 uniform float shadeColorRed = 0.0f;
 uniform float shadeColorGreen = 0.0f;

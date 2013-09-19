@@ -11,7 +11,7 @@ public:
 	void update();
 	void render( const GLuint * textures );
 	void addSlider( const std::string text, const std::string shaderProperty, 
-		const float min, const float max );
+		const float min, const float max, const float initial );
 private:
 	std::vector<Slider> sliders;
 };

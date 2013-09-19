@@ -6,16 +6,20 @@
 #include "RenderUtility.h"
 
 Slider::Slider( const std::string text, const std::string shaderProperty, 
-		const float min, const float max, const float sliderPositionY ) : 
+		const float min, const float max, const float initial,
+		const float sliderPositionY ) : 
 	text( text ),
 	shaderProperty( shaderProperty ),
 	min( min ),
 	max( max ),
-	currentPercentage( ( max + min ) / 2 ),
+	currentPercentage( ( initial - min ) / ( max - min ) ),
 	sliderPosition( slider_consts::sliderPositionX, 
 		slider_consts::sliderPositionY + sliderPositionY ),
-	buttonPosition( sliderPosition ),
-	buttonPressed( false ) {}
+	buttonPosition( Position( sliderPosition.X + slider_consts::sliderLength * 
+		(-0.5f + currentPercentage), sliderPosition.Y )),
+	buttonPressed( false ) {
+		setUniform( shaderProperty, min + currentPercentage * (max - min) );
+	}
 
 void Slider::update() {
 	

@@ -115,7 +115,7 @@ void Camera::scrollWheelUpdates() {
 
 void Camera::arrowUpdates() {
 
-	float arrowFactor = 2.0f;
+	float arrowFactor = 0.2f;
 	glm::vec4 normD = glm::normalize( cameraPoint - lookAtPoint );
 	glm::vec4 normDY = glm::normalize( v3tov4(
 		glm::cross( v4tov3( normD ), v4tov3(upAxis) )));

@@ -14,7 +14,7 @@
 
 RenderManager::RenderManager() :
 	windowTitle( "Real-timeish Cloud Renderer" ),
-	nearPlane( 0.00001f ), 
+	nearPlane( 0.1f ), 
 	farPlane( 25.0f ),
 	fieldOfView( 75.0f ),
 	tanFOV( tan( fieldOfView / 2.0f / 360.0f * 2.0f * 3.14f )),

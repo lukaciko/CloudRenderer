@@ -30,7 +30,6 @@ int viewSamples = int(viewSamplesF);
 int lightSamples = int(lightSamplesF);
 
 const float maxDistance = sqrt(3.0); // Length of a cube diagonal
-float viewStepSize = maxDistance/viewSamples;
 float lightStepSize = maxDistance/viewSamples;
 
 out vec4 outColor;
@@ -40,13 +39,27 @@ struct Ray {
     vec3 direction; // Normalized
 };
 
+// Perform slab method for ray/box intersection. Box spans (-1,-1,-1), (1,1,1)
+// Returns distances to the two intersections
+bool IntersectRayBox(Ray r, out float t0, out float t1) {
+    vec3 invR = 1.0 / r.direction;
+    vec3 tbot = invR * (vec3( -1, -1, -1), - r.origin);
+    vec3 ttop = invR * (vec3( 1, 1, 1) - r.origin);
+    vec3 tmin = min(ttop, tbot);
+    vec3 tmax = max(ttop, tbot);
+    vec2 t = max(tmin.xx, tmin.yz);
+    t0 = max(t.x, t.y);
+    t = min(tmax.xx, tmax.yz);
+    t1 = min(t.x, t.y);
+    return t0 <= t1;
+}
+
 void main() {
 	
 	// Direction in view splace
 	vec3 viewDirection;
 	viewDirection.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
-	//viewDirection.xy *= tanFOV; // tan( fov / 2 )
-	viewDirection.z = -1/tanFOV; //-1;
+	viewDirection.z = -1 / tanFOV;
 
 	// Transform direction to world	space
 	viewDirection = ( viewInverse * vec4( viewDirection, 0 ) ).xyz;
@@ -55,8 +68,10 @@ void main() {
 
 	vec3 color = vec3( 67/256.0, 128/256.0, 183/256.0 );
 	vec3 pos = viewRay.origin;
-	pos += viewDirection * viewStepSize * viewSamples;
-	//TODO: move to cube beginning
+	float tmin, tmax;
+	IntersectRayBox( viewRay, tmin, tmax );
+	pos += tmax * viewRay.direction;
+	float viewStepSize = ( tmax - tmin ) / viewSamples;
 
 	vec3 shadeColor = vec3( shadeColorRed, shadeColorGreen, shadeColorBlue );
 	vec3 sunPosition = vec3( sunPositionX, sunPositionY, sunPositionZ );
@@ -84,7 +99,7 @@ void main() {
 
 			}
 
-			// add color depending on cell density and attenuation
+			// Add color depending on cell density and attenuation
 			if( cellDensity > 0.001 ) {
 				color = mix( color, vec3( mix ( attenuation, 1.0, shadeColor.x ), 
 				                          mix ( attenuation, 1.0, shadeColor.y ), 

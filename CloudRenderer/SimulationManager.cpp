@@ -146,7 +146,7 @@ void SimulationManager::calculateDistSize( float *** distSize ) {
 
 void SimulationManager::calculateDensity( bool *** cld, float *** den ) {
 
-	int S = 5; // Blur matrix is size SxSxS
+	int S = 6; // Blur matrix is size SxSxS
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
 			for( int k = 0; k != z; ++k)

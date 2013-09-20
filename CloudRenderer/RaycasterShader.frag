@@ -16,6 +16,9 @@ uniform float densityCutoff = 0.06f;
 uniform float densityFactor = 0.35f;
 uniform float attenuationFactor = 0.05f;
 uniform float colorMultiplier = 5.0f;
+uniform float lightColorRed = 1.0f;
+uniform float lightColorGreen = 1.0f;
+uniform float lightColorBlue = 1.0f;
 uniform float shadeColorRed = 0.0f;
 uniform float shadeColorGreen = 0.0f;
 uniform float shadeColorBlue = 0.2f;
@@ -40,7 +43,8 @@ struct Ray {
 };
 
 // Perform slab method for ray/box intersection. Box spans (-1,-1,-1), (1,1,1)
-// Returns distances to the two intersections
+// Returns true if there is an intersection
+// t0, t1 - distances to the two intersections
 bool IntersectRayBox(Ray r, out float t0, out float t1) {
     vec3 invR = 1.0 / r.direction;
     vec3 tbot = invR * (vec3( -1, -1, -1), - r.origin);
@@ -74,6 +78,7 @@ void main() {
 	float viewStepSize = ( tmax - tmin ) / viewSamples;
 
 	vec3 shadeColor = vec3( shadeColorRed, shadeColorGreen, shadeColorBlue );
+	vec3 lightColor = vec3( lightColorRed, lightColorGreen, lightColorBlue );
 	vec3 sunPosition = vec3( sunPositionX, sunPositionY, sunPositionZ );
 
 	for( int i = 0; i < viewSamples; ++i ) {
@@ -87,24 +92,21 @@ void main() {
 
 			float attenuation = 1;
 			vec3 lightPos = pos;
+			
 			// Calculate light attenuation
 			for( int j = 0; j < lightSamples; ++j ) {
-
+				// Closer texture reads contribute more
 				attenuation *= 1 - 
 					texture( density, lightPos ).x	
 					* attenuationFactor				 
-					* ( 1 - j / lightSamples );		// Closer texture reads contribute more
-				// TODO: optimize - check for break
+					* ( 1 - j / lightSamples );
 				lightPos += lightRay.direction * lightStepSize;
-
 			}
 
 			// Add color depending on cell density and attenuation
 			if( cellDensity > 0.001 ) {
-				color = mix( color, vec3( mix ( attenuation, 1.0, shadeColor.x ), 
-				                          mix ( attenuation, 1.0, shadeColor.y ), 
-										  mix ( attenuation, 1.0, shadeColor.z )), 
-					         cellDensity * colorMultiplier);
+				color = mix( color, mix ( shadeColor, lightColor, attenuation ), 
+			         cellDensity * colorMultiplier);
 			}
 		}
 

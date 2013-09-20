@@ -125,7 +125,10 @@ bool RenderManager::initialize( const int gridX, const int gridY,
 	controls.addSlider( "Density Cutoff", "densityCutoff", 0.0f, 0.2f, 0.06f );
 	controls.addSlider( "Density Factor", "densityFactor", 0.0f, 1.0f, 0.35f );
 	controls.addSlider( "Color Multiplier", "colorMultiplier", 1.0f, 10.0f, 5.0f );
-	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 1.0f, 0.05f );
+	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 0.5f, 0.05f );
+	controls.addSlider( "Light ColorRed", "lightColorRed", 0.0f, 1.0f, 1.0f );
+	controls.addSlider( "Light ColorGreen", "lightColorGreen", 0.0f, 1.0f, 1.0f );
+	controls.addSlider( "Light ColorBlue", "lightColorBlue", 0.0f, 1.0f, 1.0f );
 	controls.addSlider( "Shade ColorRed", "shadeColorRed", 0.0f, 1.0f, 0.0f );
 	controls.addSlider( "Shade ColorGreen", "shadeColorGreen", 0.0f, 1.0f, 0.0f );
 	controls.addSlider( "Shade ColorBlue", "shadeColorBlue", 0.0f, 1.0f, 0.2f );

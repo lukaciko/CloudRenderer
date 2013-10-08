@@ -7,6 +7,12 @@ Cloud Renderer is an OpenGL implementation of methods for simulating and renderi
 
 ![Clouds rendered with Cloud Renderer](https://raw.github.com/LukaCiko/CloudRenderer/master/Screenshot.png)
 
+##Controls
+* **Right mouse button** — rotate the camera
+* **Arrow keys** — move the camera position
+* **1** — toggle slider controls for rendering
+* **P** — pause simulation
+
 ##Dependencies
 Cloud renderer uses GLFW, GLEW, GLM and SOIL libraries. GLFW and GLEW need to be installed in order to run the program.
 

@@ -8,6 +8,7 @@ class Cloud {
 public:
 	Cloud( const glm::vec3 position, const float size );
 	inline glm::vec3 getPosition() const { return position; };
+	void move( const float horizontalFactor, const float hightFactor );
 	inline float getSize() const { return size; };
 private:
 	glm::vec3 position;

@@ -15,10 +15,10 @@
 RenderManager::RenderManager() :
 	windowTitle( "Real-timeish Cloud Renderer" ),
 	nearPlane( 0.1f ), 
-	farPlane( 25.0f ),
+	farPlane( 15.0f ),
 	fieldOfView( 75.0f ),
 	tanFOV( tan( fieldOfView / 2.0f / 360.0f * 2.0f * 3.14f )),
-	showVRC( true ) {};
+	showVRC( false ) {};
 
 bool RenderManager::initialize( const int gridX, const int gridY, 
 								 const int gridZ ) {
@@ -125,14 +125,14 @@ bool RenderManager::initialize( const int gridX, const int gridY,
 	controls.addSlider( "Density Cutoff", "densityCutoff", 0.0f, 0.2f, 0.06f );
 	controls.addSlider( "Density Factor", "densityFactor", 0.0f, 1.0f, 0.35f );
 	controls.addSlider( "Color Multiplier", "colorMultiplier", 1.0f, 10.0f, 5.0f );
-	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 0.5f, 0.05f );
+	controls.addSlider( "Attenuation Factor", "attenuationFactor", 0.0f, 0.5f, 0.15f );
 	controls.addSlider( "Light ColorRed", "lightColorRed", 0.0f, 1.0f, 1.0f );
 	controls.addSlider( "Light ColorGreen", "lightColorGreen", 0.0f, 1.0f, 1.0f );
 	controls.addSlider( "Light ColorBlue", "lightColorBlue", 0.0f, 1.0f, 1.0f );
 	controls.addSlider( "Shade ColorRed", "shadeColorRed", 0.0f, 1.0f, 0.0f );
 	controls.addSlider( "Shade ColorGreen", "shadeColorGreen", 0.0f, 1.0f, 0.0f );
 	controls.addSlider( "Shade ColorBlue", "shadeColorBlue", 0.0f, 1.0f, 0.2f );
-	controls.addSlider( "Sun PositionX", "sunPositionX", -1.0f, 1.0f, 0.5f );
+	controls.addSlider( "Sun PositionX", "sunPositionX", -1.0f, 1.0f, 0.0f );
 	controls.addSlider( "Sun PositionY", "sunPositionY", -1.0f, 1.0f, 0.5f );
 	controls.addSlider( "Sun PositionZ", "sunPositionZ", -1.0f, 1.0f, 0.5f );
 	controls.addSlider( "View Samples", "viewSamplesF", 1.0f, 1024.0f, 128.0f );
@@ -167,7 +167,7 @@ void RenderManager::draw( const SimulationData& data, GLFWmutex simMutex,
 	camera.updateCamera();
 
 	// Clear the screen with background (sky) color
-	glClearColor( 155/256.0f, 225/256.0f, 251/256.0f, 1.0f );
+	glClearColor( 67/256.0f, 128/256.0f, 183/256.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// Lock mutex because we will use data, which is shared with simulation
@@ -175,15 +175,15 @@ void RenderManager::draw( const SimulationData& data, GLFWmutex simMutex,
 
 	interpolateCloudData( data, time );
 	
-	if( showVRC )
-		renderRayCastingClouds( data, time );
+	renderRayCastingClouds( data, time );
 	
 	glfwUnlockMutex( simMutex );
 
 	glUseProgram( raycasterShaderProgram );
 	controls.update();
 	
-	renderGUI();
+	if( showVRC )
+		renderGUI();
 
 	// Check for errors
 	GLint glErr = glGetError();
@@ -223,7 +223,7 @@ void RenderManager::renderRayCastingClouds( const SimulationData & data,
 	glBindVertexArray( VAOs[0] );
 	glUseProgram( raycasterShaderProgram );
 	setUniform( "view", camera.getLookAtMatrix() );
-	setUniform( "viewInverse", glm::inverse(camera.getLookAtMatrix()) );
+	setUniform( "viewInverse", glm::inverse( camera.getLookAtMatrix()) );
 	setUniform( "proj", perspectiveProjection );
 	setUniform( "tanFOV", tanFOV );
 	setUniform( "screenSize", glm::vec2( global_consts::windowWidth, 

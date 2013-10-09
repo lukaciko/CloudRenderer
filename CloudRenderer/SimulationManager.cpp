@@ -56,13 +56,25 @@ void SimulationManager::simulateCellular( bool *** hum, bool *** act,
 									    bool *** cld, bool *** fAc, float *** distSize ) {
 	
 	std::cout << "Simulation step\n";
+	
+	// Generate new clouds
 	bool loopEntered = false;
-	while( clouds.size() < 10  || gen() % 15 == 0 ) {
+	while( clouds.size() < 10  || gen() % 10 == 0 ) {
 		createRandomCloud();
 		loopEntered = true;
 	}
-	if( loopEntered ) calculateDistSize( distSize );
 
+	// Move the clouds
+	for ( Cloud & c : clouds )
+	{
+		//c.move( 0.02f, 1.5f );
+	}
+	
+	// Recalculate
+	calculateDistSize( distSize );
+
+
+	// Perform cellular automaton step
 	for( int i = 0; i != x; ++i )
 		for( int j = 0; j != y; ++j )
 			for(int k = 0; k != z; ++k )

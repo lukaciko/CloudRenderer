@@ -14,7 +14,7 @@ float far;
 
 uniform float densityCutoff = 0.06f;
 uniform float densityFactor = 0.35f;
-uniform float attenuationFactor = 0.05f;
+uniform float attenuationFactor = 0.15F;
 uniform float colorMultiplier = 5.0f;
 uniform float lightColorRed = 1.0f;
 uniform float lightColorGreen = 1.0f;
@@ -22,7 +22,7 @@ uniform float lightColorBlue = 1.0f;
 uniform float shadeColorRed = 0.0f;
 uniform float shadeColorGreen = 0.0f;
 uniform float shadeColorBlue = 0.2f;
-uniform float sunPositionX = 0.5f;
+uniform float sunPositionX = 0.0f;
 uniform float sunPositionY = 0.5f;
 uniform float sunPositionZ = 0.5f;
 
@@ -63,7 +63,9 @@ void main() {
 	// Direction in view splace
 	vec3 viewDirection;
 	viewDirection.xy = 2.0f * gl_FragCoord.xy / screenSize - 1.0f;
-	viewDirection.z = -1 / tanFOV;
+	viewDirection.z = -1.0f / tanFOV;
+	// FOV corresponds to Y axis, scale x accordingly
+	viewDirection.x *= screenSize.x / screenSize.y;
 
 	// Transform direction to world	space
 	viewDirection = ( viewInverse * vec4( viewDirection, 0 ) ).xyz;
@@ -116,5 +118,5 @@ void main() {
 
 	outColor = vec4( color, 255 );
 	vec4 debug = vec4( viewRay.direction, 1.0 );
-	outColor = mix( outColor, debug, 0.00 );
+	outColor = mix( outColor, debug, 0.0 );
 }

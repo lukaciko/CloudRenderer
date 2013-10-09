@@ -3,8 +3,8 @@
 
 namespace global_consts {
 
-	const int windowWidth = 1000;
-	const int windowHeight = 1000;
+	const int windowWidth = 1400;
+	const int windowHeight = 700;
 
 }
 
